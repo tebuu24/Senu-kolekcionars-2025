@@ -18,7 +18,7 @@
 background-color: qradialgradient(spread:pad, cx:0.5, cy:0.5, radius:0.5, fx:0.5, fy:0.5, stop:0.211823 rgba(58, 88, 78, 255), stop:1 rgba(9, 46, 33, 255))</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QPushButton" name="pushButton">
+   <widget class="QPushButton" name="login">
     <property name="geometry">
      <rect>
       <x>540</x>
@@ -47,9 +47,9 @@ border-radius:20px;</string>
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
-      <x>500</x>
+      <x>30</x>
       <y>60</y>
-      <width>441</width>
+      <width>1351</width>
       <height>151</height>
      </rect>
     </property>
@@ -62,13 +62,17 @@ border-radius:20px;</string>
      </font>
     </property>
     <property name="styleSheet">
-     <string notr="true">background-color: rgba(255, 255, 255, 0);</string>
+     <string notr="true">background-color: rgba(255, 255, 255, 0);
+color: rgb(255, 255, 255);</string>
     </property>
     <property name="text">
      <string>Labdien, Sēņotāj!</string>
     </property>
+    <property name="alignment">
+     <set>Qt::AlignmentFlag::AlignCenter</set>
+    </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_2">
+   <widget class="QPushButton" name="createAccount">
     <property name="geometry">
      <rect>
       <x>540</x>
