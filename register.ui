@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>login</class>
- <widget class="QDialog" name="login">
+ <class>register_2</class>
+ <widget class="QDialog" name="register_2">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -239,6 +239,12 @@
     <font>
      <family>OCR A Extended</family>
      <pointsize>12</pointsize>
+     <weight>50</weight>
+     <italic>false</italic>
+     <bold>false</bold>
+     <underline>false</underline>
+     <strikeout>false</strikeout>
+     <kerning>true</kerning>
     </font>
    </property>
    <property name="autoFillBackground">
@@ -457,8 +463,7 @@ color: rgb(199, 218, 186);</string>
    </property>
    <property name="styleSheet">
     <string notr="true">background:rgb(56, 67, 56);
-color: rgb(199, 218, 186);
-</string>
+color: rgb(199, 218, 186);</string>
    </property>
    <property name="locale">
     <locale language="Latvian" country="Latvia"/>
@@ -814,22 +819,22 @@ color: rgb(199, 218, 186);
   <widget class="QLabel" name="logintitle">
    <property name="geometry">
     <rect>
-     <x>180</x>
-     <y>90</y>
-     <width>171</width>
-     <height>31</height>
+     <x>160</x>
+     <y>80</y>
+     <width>201</width>
+     <height>51</height>
     </rect>
    </property>
    <property name="minimumSize">
     <size>
-     <width>171</width>
-     <height>31</height>
+     <width>201</width>
+     <height>51</height>
     </size>
    </property>
    <property name="maximumSize">
     <size>
-     <width>171</width>
-     <height>31</height>
+     <width>201</width>
+     <height>51</height>
     </size>
    </property>
    <property name="palette">
@@ -847,9 +852,9 @@ color: rgb(199, 218, 186);
       <colorrole role="Button">
        <brush brushstyle="SolidPattern">
         <color alpha="255">
-         <red>47</red>
-         <green>56</green>
-         <blue>47</blue>
+         <red>0</red>
+         <green>170</green>
+         <blue>0</blue>
         </color>
        </brush>
       </colorrole>
@@ -894,9 +899,9 @@ color: rgb(199, 218, 186);
       <colorrole role="Button">
        <brush brushstyle="SolidPattern">
         <color alpha="255">
-         <red>47</red>
-         <green>56</green>
-         <blue>47</blue>
+         <red>0</red>
+         <green>170</green>
+         <blue>0</blue>
         </color>
        </brush>
       </colorrole>
@@ -941,9 +946,9 @@ color: rgb(199, 218, 186);
       <colorrole role="Button">
        <brush brushstyle="SolidPattern">
         <color alpha="255">
-         <red>47</red>
-         <green>56</green>
-         <blue>47</blue>
+         <red>0</red>
+         <green>170</green>
+         <blue>0</blue>
         </color>
        </brush>
       </colorrole>
@@ -992,7 +997,7 @@ color: rgb(199, 218, 186);
     <locale language="Latvian" country="Latvia"/>
    </property>
    <property name="text">
-    <string>Pieteikties</string>
+    <string>Reģistrēties</string>
    </property>
    <property name="wordWrap">
     <bool>false</bool>
@@ -1004,22 +1009,22 @@ color: rgb(199, 218, 186);
   <widget class="QPushButton" name="loginbutton">
    <property name="geometry">
     <rect>
-     <x>190</x>
-     <y>410</y>
-     <width>151</width>
-     <height>41</height>
+     <x>180</x>
+     <y>430</y>
+     <width>171</width>
+     <height>51</height>
     </rect>
    </property>
    <property name="minimumSize">
     <size>
-     <width>151</width>
-     <height>41</height>
+     <width>171</width>
+     <height>51</height>
     </size>
    </property>
    <property name="maximumSize">
     <size>
-     <width>151</width>
-     <height>41</height>
+     <width>171</width>
+     <height>51</height>
     </size>
    </property>
    <property name="palette">
@@ -1040,15 +1045,6 @@ color: rgb(199, 218, 186);
          <red>66</red>
          <green>88</green>
          <blue>56</blue>
-        </color>
-       </brush>
-      </colorrole>
-      <colorrole role="Text">
-       <brush brushstyle="SolidPattern">
-        <color alpha="255">
-         <red>199</red>
-         <green>218</green>
-         <blue>186</blue>
         </color>
        </brush>
       </colorrole>
@@ -1099,15 +1095,6 @@ color: rgb(199, 218, 186);
         </color>
        </brush>
       </colorrole>
-      <colorrole role="Text">
-       <brush brushstyle="SolidPattern">
-        <color alpha="255">
-         <red>199</red>
-         <green>218</green>
-         <blue>186</blue>
-        </color>
-       </brush>
-      </colorrole>
       <colorrole role="ButtonText">
        <brush brushstyle="SolidPattern">
         <color alpha="255">
@@ -1140,9 +1127,9 @@ color: rgb(199, 218, 186);
       <colorrole role="WindowText">
        <brush brushstyle="SolidPattern">
         <color alpha="255">
-         <red>199</red>
-         <green>218</green>
-         <blue>186</blue>
+         <red>120</red>
+         <green>120</green>
+         <blue>120</blue>
         </color>
        </brush>
       </colorrole>
@@ -1155,21 +1142,12 @@ color: rgb(199, 218, 186);
         </color>
        </brush>
       </colorrole>
-      <colorrole role="Text">
-       <brush brushstyle="SolidPattern">
-        <color alpha="255">
-         <red>199</red>
-         <green>218</green>
-         <blue>186</blue>
-        </color>
-       </brush>
-      </colorrole>
       <colorrole role="ButtonText">
        <brush brushstyle="SolidPattern">
         <color alpha="255">
-         <red>199</red>
-         <green>218</green>
-         <blue>186</blue>
+         <red>120</red>
+         <green>120</green>
+         <blue>120</blue>
         </color>
        </brush>
       </colorrole>
@@ -1204,14 +1182,13 @@ color: rgb(199, 218, 186);
    </property>
    <property name="styleSheet">
     <string notr="true">border-radius: 20px;
-background-color: rgb(66, 88, 56);
-color: rgb(199, 218, 186);</string>
+background-color: rgb(66, 88, 56);</string>
    </property>
    <property name="locale">
     <locale language="Latvian" country="Latvia"/>
    </property>
    <property name="text">
-    <string>Ienākt</string>
+    <string>Reģistrēties</string>
    </property>
   </widget>
   <widget class="QLabel" name="error">
@@ -1404,31 +1381,25 @@ font-color: rgb(255, 96, 23);</string>
     <string/>
    </property>
   </widget>
-  <widget class="QPushButton" name="newbutton">
+  <widget class="QPlainTextEdit" name="passwordfield_2">
    <property name="geometry">
     <rect>
-     <x>260</x>
-     <y>340</y>
-     <width>111</width>
-     <height>21</height>
+     <x>80</x>
+     <y>360</y>
+     <width>361</width>
+     <height>41</height>
     </rect>
    </property>
    <property name="minimumSize">
     <size>
-     <width>111</width>
-     <height>21</height>
+     <width>361</width>
+     <height>41</height>
     </size>
    </property>
    <property name="maximumSize">
     <size>
-     <width>111</width>
-     <height>21</height>
-    </size>
-   </property>
-   <property name="baseSize">
-    <size>
-     <width>111</width>
-     <height>21</height>
+     <width>361</width>
+     <height>41</height>
     </size>
    </property>
    <property name="palette">
@@ -1446,45 +1417,9 @@ font-color: rgb(255, 96, 23);</string>
       <colorrole role="Button">
        <brush brushstyle="SolidPattern">
         <color alpha="255">
-         <red>66</red>
-         <green>88</green>
+         <red>56</red>
+         <green>67</green>
          <blue>56</blue>
-        </color>
-       </brush>
-      </colorrole>
-      <colorrole role="Light">
-       <brush brushstyle="SolidPattern">
-        <color alpha="255">
-         <red>255</red>
-         <green>255</green>
-         <blue>255</blue>
-        </color>
-       </brush>
-      </colorrole>
-      <colorrole role="Midlight">
-       <brush brushstyle="SolidPattern">
-        <color alpha="255">
-         <red>227</red>
-         <green>236</green>
-         <blue>220</blue>
-        </color>
-       </brush>
-      </colorrole>
-      <colorrole role="Dark">
-       <brush brushstyle="SolidPattern">
-        <color alpha="255">
-         <red>135</red>
-         <green>188</green>
-         <blue>116</blue>
-        </color>
-       </brush>
-      </colorrole>
-      <colorrole role="Mid">
-       <brush brushstyle="SolidPattern">
-        <color alpha="255">
-         <red>133</red>
-         <green>145</green>
-         <blue>124</blue>
         </color>
        </brush>
       </colorrole>
@@ -1494,15 +1429,6 @@ font-color: rgb(255, 96, 23);</string>
          <red>199</red>
          <green>218</green>
          <blue>186</blue>
-        </color>
-       </brush>
-      </colorrole>
-      <colorrole role="BrightText">
-       <brush brushstyle="SolidPattern">
-        <color alpha="255">
-         <red>255</red>
-         <green>255</green>
-         <blue>255</blue>
         </color>
        </brush>
       </colorrole>
@@ -1518,8 +1444,8 @@ font-color: rgb(255, 96, 23);</string>
       <colorrole role="Base">
        <brush brushstyle="SolidPattern">
         <color alpha="255">
-         <red>66</red>
-         <green>88</green>
+         <red>56</red>
+         <green>67</green>
          <blue>56</blue>
         </color>
        </brush>
@@ -1527,45 +1453,9 @@ font-color: rgb(255, 96, 23);</string>
       <colorrole role="Window">
        <brush brushstyle="SolidPattern">
         <color alpha="255">
-         <red>66</red>
-         <green>88</green>
+         <red>56</red>
+         <green>67</green>
          <blue>56</blue>
-        </color>
-       </brush>
-      </colorrole>
-      <colorrole role="Shadow">
-       <brush brushstyle="SolidPattern">
-        <color alpha="255">
-         <red>0</red>
-         <green>0</green>
-         <blue>0</blue>
-        </color>
-       </brush>
-      </colorrole>
-      <colorrole role="AlternateBase">
-       <brush brushstyle="SolidPattern">
-        <color alpha="255">
-         <red>227</red>
-         <green>236</green>
-         <blue>220</blue>
-        </color>
-       </brush>
-      </colorrole>
-      <colorrole role="ToolTipBase">
-       <brush brushstyle="SolidPattern">
-        <color alpha="255">
-         <red>255</red>
-         <green>255</green>
-         <blue>220</blue>
-        </color>
-       </brush>
-      </colorrole>
-      <colorrole role="ToolTipText">
-       <brush brushstyle="SolidPattern">
-        <color alpha="255">
-         <red>0</red>
-         <green>0</green>
-         <blue>0</blue>
         </color>
        </brush>
       </colorrole>
@@ -1583,45 +1473,9 @@ font-color: rgb(255, 96, 23);</string>
       <colorrole role="Button">
        <brush brushstyle="SolidPattern">
         <color alpha="255">
-         <red>66</red>
-         <green>88</green>
+         <red>56</red>
+         <green>67</green>
          <blue>56</blue>
-        </color>
-       </brush>
-      </colorrole>
-      <colorrole role="Light">
-       <brush brushstyle="SolidPattern">
-        <color alpha="255">
-         <red>255</red>
-         <green>255</green>
-         <blue>255</blue>
-        </color>
-       </brush>
-      </colorrole>
-      <colorrole role="Midlight">
-       <brush brushstyle="SolidPattern">
-        <color alpha="255">
-         <red>227</red>
-         <green>236</green>
-         <blue>220</blue>
-        </color>
-       </brush>
-      </colorrole>
-      <colorrole role="Dark">
-       <brush brushstyle="SolidPattern">
-        <color alpha="255">
-         <red>135</red>
-         <green>188</green>
-         <blue>116</blue>
-        </color>
-       </brush>
-      </colorrole>
-      <colorrole role="Mid">
-       <brush brushstyle="SolidPattern">
-        <color alpha="255">
-         <red>133</red>
-         <green>145</green>
-         <blue>124</blue>
         </color>
        </brush>
       </colorrole>
@@ -1631,15 +1485,6 @@ font-color: rgb(255, 96, 23);</string>
          <red>199</red>
          <green>218</green>
          <blue>186</blue>
-        </color>
-       </brush>
-      </colorrole>
-      <colorrole role="BrightText">
-       <brush brushstyle="SolidPattern">
-        <color alpha="255">
-         <red>255</red>
-         <green>255</green>
-         <blue>255</blue>
         </color>
        </brush>
       </colorrole>
@@ -1655,8 +1500,8 @@ font-color: rgb(255, 96, 23);</string>
       <colorrole role="Base">
        <brush brushstyle="SolidPattern">
         <color alpha="255">
-         <red>66</red>
-         <green>88</green>
+         <red>56</red>
+         <green>67</green>
          <blue>56</blue>
         </color>
        </brush>
@@ -1664,45 +1509,9 @@ font-color: rgb(255, 96, 23);</string>
       <colorrole role="Window">
        <brush brushstyle="SolidPattern">
         <color alpha="255">
-         <red>66</red>
-         <green>88</green>
+         <red>56</red>
+         <green>67</green>
          <blue>56</blue>
-        </color>
-       </brush>
-      </colorrole>
-      <colorrole role="Shadow">
-       <brush brushstyle="SolidPattern">
-        <color alpha="255">
-         <red>0</red>
-         <green>0</green>
-         <blue>0</blue>
-        </color>
-       </brush>
-      </colorrole>
-      <colorrole role="AlternateBase">
-       <brush brushstyle="SolidPattern">
-        <color alpha="255">
-         <red>227</red>
-         <green>236</green>
-         <blue>220</blue>
-        </color>
-       </brush>
-      </colorrole>
-      <colorrole role="ToolTipBase">
-       <brush brushstyle="SolidPattern">
-        <color alpha="255">
-         <red>255</red>
-         <green>255</green>
-         <blue>220</blue>
-        </color>
-       </brush>
-      </colorrole>
-      <colorrole role="ToolTipText">
-       <brush brushstyle="SolidPattern">
-        <color alpha="255">
-         <red>0</red>
-         <green>0</green>
-         <blue>0</blue>
         </color>
        </brush>
       </colorrole>
@@ -1720,45 +1529,9 @@ font-color: rgb(255, 96, 23);</string>
       <colorrole role="Button">
        <brush brushstyle="SolidPattern">
         <color alpha="255">
-         <red>66</red>
-         <green>88</green>
+         <red>56</red>
+         <green>67</green>
          <blue>56</blue>
-        </color>
-       </brush>
-      </colorrole>
-      <colorrole role="Light">
-       <brush brushstyle="SolidPattern">
-        <color alpha="255">
-         <red>255</red>
-         <green>255</green>
-         <blue>255</blue>
-        </color>
-       </brush>
-      </colorrole>
-      <colorrole role="Midlight">
-       <brush brushstyle="SolidPattern">
-        <color alpha="255">
-         <red>227</red>
-         <green>236</green>
-         <blue>220</blue>
-        </color>
-       </brush>
-      </colorrole>
-      <colorrole role="Dark">
-       <brush brushstyle="SolidPattern">
-        <color alpha="255">
-         <red>135</red>
-         <green>188</green>
-         <blue>116</blue>
-        </color>
-       </brush>
-      </colorrole>
-      <colorrole role="Mid">
-       <brush brushstyle="SolidPattern">
-        <color alpha="255">
-         <red>133</red>
-         <green>145</green>
-         <blue>124</blue>
         </color>
        </brush>
       </colorrole>
@@ -1768,15 +1541,6 @@ font-color: rgb(255, 96, 23);</string>
          <red>199</red>
          <green>218</green>
          <blue>186</blue>
-        </color>
-       </brush>
-      </colorrole>
-      <colorrole role="BrightText">
-       <brush brushstyle="SolidPattern">
-        <color alpha="255">
-         <red>255</red>
-         <green>255</green>
-         <blue>255</blue>
         </color>
        </brush>
       </colorrole>
@@ -1792,8 +1556,8 @@ font-color: rgb(255, 96, 23);</string>
       <colorrole role="Base">
        <brush brushstyle="SolidPattern">
         <color alpha="255">
-         <red>66</red>
-         <green>88</green>
+         <red>56</red>
+         <green>67</green>
          <blue>56</blue>
         </color>
        </brush>
@@ -1801,45 +1565,9 @@ font-color: rgb(255, 96, 23);</string>
       <colorrole role="Window">
        <brush brushstyle="SolidPattern">
         <color alpha="255">
-         <red>66</red>
-         <green>88</green>
+         <red>56</red>
+         <green>67</green>
          <blue>56</blue>
-        </color>
-       </brush>
-      </colorrole>
-      <colorrole role="Shadow">
-       <brush brushstyle="SolidPattern">
-        <color alpha="255">
-         <red>0</red>
-         <green>0</green>
-         <blue>0</blue>
-        </color>
-       </brush>
-      </colorrole>
-      <colorrole role="AlternateBase">
-       <brush brushstyle="SolidPattern">
-        <color alpha="255">
-         <red>199</red>
-         <green>218</green>
-         <blue>186</blue>
-        </color>
-       </brush>
-      </colorrole>
-      <colorrole role="ToolTipBase">
-       <brush brushstyle="SolidPattern">
-        <color alpha="255">
-         <red>255</red>
-         <green>255</green>
-         <blue>220</blue>
-        </color>
-       </brush>
-      </colorrole>
-      <colorrole role="ToolTipText">
-       <brush brushstyle="SolidPattern">
-        <color alpha="255">
-         <red>0</red>
-         <green>0</green>
-         <blue>0</blue>
         </color>
        </brush>
       </colorrole>
@@ -1848,46 +1576,43 @@ font-color: rgb(255, 96, 23);</string>
    </property>
    <property name="font">
     <font>
-     <family>Comic Sans MS</family>
-     <pointsize>9</pointsize>
-     <weight>75</weight>
-     <bold>true</bold>
+     <family>OCR A Extended</family>
+     <pointsize>12</pointsize>
+     <italic>false</italic>
     </font>
    </property>
    <property name="styleSheet">
-    <string notr="true">border-radius: 8px;
-background-color: rgb(66, 88, 56);
-color: rgb(199, 218, 186);
-border: 1px, solid;</string>
+    <string notr="true">background:rgb(56, 67, 56);
+color: rgb(199, 218, 186);</string>
    </property>
    <property name="locale">
     <locale language="Latvian" country="Latvia"/>
    </property>
-   <property name="text">
-    <string>Reģistrēties</string>
+   <property name="plainText">
+    <string/>
    </property>
-   <property name="checkable">
+   <property name="backgroundVisible">
     <bool>false</bool>
    </property>
   </widget>
   <widget class="QLabel" name="label3">
    <property name="geometry">
     <rect>
-     <x>170</x>
+     <x>80</x>
      <y>340</y>
-     <width>111</width>
+     <width>141</width>
      <height>16</height>
     </rect>
    </property>
    <property name="minimumSize">
     <size>
-     <width>111</width>
+     <width>141</width>
      <height>16</height>
     </size>
    </property>
    <property name="maximumSize">
     <size>
-     <width>111</width>
+     <width>141</width>
      <height>16</height>
     </size>
    </property>
@@ -2012,24 +1737,15 @@ border: 1px, solid;</string>
    <property name="font">
     <font>
      <family>Comic Sans MS</family>
-     <pointsize>9</pointsize>
+     <pointsize>10</pointsize>
      <weight>75</weight>
      <bold>true</bold>
     </font>
    </property>
    <property name="text">
-    <string>Nav konta?</string>
+    <string>Parole atkārtoti</string>
    </property>
   </widget>
-  <zorder>label3</zorder>
-  <zorder>usernamefield</zorder>
-  <zorder>passwordfield</zorder>
-  <zorder>label1</zorder>
-  <zorder>label2</zorder>
-  <zorder>logintitle</zorder>
-  <zorder>loginbutton</zorder>
-  <zorder>error</zorder>
-  <zorder>newbutton</zorder>
  </widget>
  <resources/>
  <connections/>
