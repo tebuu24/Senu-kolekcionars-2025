@@ -1,8 +1,8 @@
 import sys
 import sqlite3
-from PyQt6.uic import loadUi
-from PyQt6.QtWidgets import QApplication, QMainWindow, QStackedWidget, QPushButton
-from PyQt6.QtWidgets import QDialog
+from PyQt5.uic import loadUi
+from PyQt5.QtWidgets import QApplication, QMainWindow, QStackedWidget, QPushButton
+from PyQt5.QtWidgets import QDialog
 
 #sākums/welcome screen
 class WelcomeScreen(QMainWindow):
@@ -28,22 +28,20 @@ class LoginScreen(QDialog):
         user = self.emailfield.text()
         password = self.passwordfield.text()
 
-        if len(user)==0 or len(password)==0:
+        if len(user) == 0 or len(password) == 0:
             self.error.setText("Nedrīkst būt tukši lauki.")
         else:
             conn = sqlite3.connect("lietotaji.db")
             cur = conn.cursor()
-            query = 'SELECT password FROM login_info WHERE username =\'"+user+"\'"'
-            cur.execute(query)
-            result_pass= cur.fetchone()[0]
+            query = "SELECT password FROM login_info WHERE username = ?"
+            cur.execute(query, (user,))
+            result_pass = cur.fetchone()[0]
             if result_pass == password:
-                print("veiksmiga pieslegsanas")
+                print("veiksmīga pieslēgšanās")
             else:
                 self.error.setText("Nav pareiza parole vai lietotājvārds")
 
-
-
-#konfigurācija/kas ir kas
+# konfigurācija/kas ir kas
 app = QApplication(sys.argv)
 widget = QStackedWidget()
 welcome = WelcomeScreen(widget)
@@ -52,8 +50,8 @@ widget.setFixedHeight(800)
 widget.setFixedWidth(1400)
 widget.show()
 
-#atver aplikāciju
+# atver aplikāciju
 try:
-    sys.exit(app.exec())
+    sys.exit(app.exec_())  # Use exec_() for PyQt5
 except Exception as e:
     print(f"exiting: {e}")
