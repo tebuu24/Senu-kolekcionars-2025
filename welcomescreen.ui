@@ -68,9 +68,6 @@ color: rgb(255, 255, 255);</string>
     <property name="text">
      <string>Labdien, Sēņotāj!</string>
     </property>
-    <property name="alignment">
-     <set>Qt::AlignmentFlag::AlignCenter</set>
-    </property>
    </widget>
    <widget class="QPushButton" name="createAccount">
     <property name="geometry">
