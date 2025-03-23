@@ -1,8 +1,7 @@
 import sys
 import sqlite3
 from PyQt5.uic import loadUi
-from PyQt5.QtWidgets import QApplication, QMainWindow, QStackedWidget, QPushButton
-from PyQt5.QtWidgets import QDialog
+from PyQt5.QtWidgets import QApplication, QMainWindow, QStackedWidget, QPushButton, QDialog
 
 #sākums/welcome screen
 class WelcomeScreen(QMainWindow):
@@ -10,8 +9,8 @@ class WelcomeScreen(QMainWindow):
         super(WelcomeScreen, self).__init__()
         loadUi("welcomescreen.ui", self)
         self.widget = widget
-        self.login.clicked.connect(self.gotologin)
-        self.createAccount.clicked.connect(self.gotocreate)
+        self.loginbutton.clicked.connect(self.gotologin)
+        self.registerbutton.clicked.connect(self.gotocreate)
 
     def gotologin(self):
         login = LoginScreen(self.widget)
@@ -23,7 +22,7 @@ class WelcomeScreen(QMainWindow):
         self.widget.setCurrentIndex(self.widget.currentIndex() + 1)
 
 #Login screen
-class LoginScreen(QDialog):
+class LoginScreen(QMainWindow):
     
     def __init__(self, widget):
         super(LoginScreen, self).__init__()
@@ -49,7 +48,7 @@ class LoginScreen(QDialog):
             else:
                 self.error.setText("Nav pareiza parole vai lietotājvārds")
                 
-class RegisterScreen(QDialog):
+class RegisterScreen(QMainWindow):
     def __init__(self, widget):
         super(RegisterScreen, self).__init__()
         loadUi("register.ui", self)

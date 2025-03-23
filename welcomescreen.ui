@@ -219,7 +219,7 @@
      <number>0</number>
     </property>
    </widget>
-   <widget class="QPushButton" name="loginbutton_2">
+   <widget class="QPushButton" name="loginbutton">
     <property name="geometry">
      <rect>
       <x>90</x>
