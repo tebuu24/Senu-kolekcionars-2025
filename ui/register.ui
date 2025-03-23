@@ -2339,9 +2339,9 @@ color: rgb(199, 218, 186);</string>
      <bool>false</bool>
     </property>
     <property name="styleSheet">
-     <string notr="true">justify-content: center;
+     <string notr="true">qproperty-alignment: AlignCenter;
 font: 75 10pt &quot;Comic Sans MS&quot;;
-font-color: rgb(255, 96, 23);</string>
+color: rgb(255, 96, 23);</string>
     </property>
     <property name="locale">
      <locale language="Latvian" country="Latvia"/>
