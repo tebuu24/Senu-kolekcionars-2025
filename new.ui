@@ -40,9 +40,9 @@
    <string>Jauna sēne</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">background-color: rgb(47, 56, 47);</string>
+   <string notr="true">background-color: rgb(9, 46, 33);</string>
   </property>
-  <widget class="QLabel" name="hellotitle">
+  <widget class="QLabel" name="instructionlabel">
    <property name="geometry">
     <rect>
      <x>130</x>
@@ -78,9 +78,9 @@
       <colorrole role="Button">
        <brush brushstyle="SolidPattern">
         <color alpha="255">
-         <red>47</red>
-         <green>56</green>
-         <blue>47</blue>
+         <red>9</red>
+         <green>46</green>
+         <blue>33</blue>
         </color>
        </brush>
       </colorrole>
@@ -96,18 +96,18 @@
       <colorrole role="Base">
        <brush brushstyle="SolidPattern">
         <color alpha="255">
-         <red>47</red>
-         <green>56</green>
-         <blue>47</blue>
+         <red>9</red>
+         <green>46</green>
+         <blue>33</blue>
         </color>
        </brush>
       </colorrole>
       <colorrole role="Window">
        <brush brushstyle="SolidPattern">
         <color alpha="255">
-         <red>47</red>
-         <green>56</green>
-         <blue>47</blue>
+         <red>9</red>
+         <green>46</green>
+         <blue>33</blue>
         </color>
        </brush>
       </colorrole>
@@ -125,9 +125,9 @@
       <colorrole role="Button">
        <brush brushstyle="SolidPattern">
         <color alpha="255">
-         <red>47</red>
-         <green>56</green>
-         <blue>47</blue>
+         <red>9</red>
+         <green>46</green>
+         <blue>33</blue>
         </color>
        </brush>
       </colorrole>
@@ -143,18 +143,18 @@
       <colorrole role="Base">
        <brush brushstyle="SolidPattern">
         <color alpha="255">
-         <red>47</red>
-         <green>56</green>
-         <blue>47</blue>
+         <red>9</red>
+         <green>46</green>
+         <blue>33</blue>
         </color>
        </brush>
       </colorrole>
       <colorrole role="Window">
        <brush brushstyle="SolidPattern">
         <color alpha="255">
-         <red>47</red>
-         <green>56</green>
-         <blue>47</blue>
+         <red>9</red>
+         <green>46</green>
+         <blue>33</blue>
         </color>
        </brush>
       </colorrole>
@@ -172,9 +172,9 @@
       <colorrole role="Button">
        <brush brushstyle="SolidPattern">
         <color alpha="255">
-         <red>47</red>
-         <green>56</green>
-         <blue>47</blue>
+         <red>9</red>
+         <green>46</green>
+         <blue>33</blue>
         </color>
        </brush>
       </colorrole>
@@ -190,18 +190,18 @@
       <colorrole role="Base">
        <brush brushstyle="SolidPattern">
         <color alpha="255">
-         <red>47</red>
-         <green>56</green>
-         <blue>47</blue>
+         <red>9</red>
+         <green>46</green>
+         <blue>33</blue>
         </color>
        </brush>
       </colorrole>
       <colorrole role="Window">
        <brush brushstyle="SolidPattern">
         <color alpha="255">
-         <red>47</red>
-         <green>56</green>
-         <blue>47</blue>
+         <red>9</red>
+         <green>46</green>
+         <blue>33</blue>
         </color>
        </brush>
       </colorrole>
@@ -232,7 +232,7 @@
     <number>0</number>
    </property>
   </widget>
-  <widget class="QPushButton" name="newbutton">
+  <widget class="QPushButton" name="uploadbutton">
    <property name="geometry">
     <rect>
      <x>80</x>
@@ -445,7 +445,7 @@ color: rgb(199, 218, 186);</string>
     <string>Augšupielādēt failu</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="backbutton">
+  <widget class="QPushButton" name="homebutton">
    <property name="geometry">
     <rect>
      <x>20</x>
@@ -490,14 +490,14 @@ text-align: center;</string>
     <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:7.8pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600; color:#c7daba;&quot;&gt;Nav izvēlēts fails&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Comic Sans MS'; font-size:7.8pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:14pt; font-weight:600; color:#c7daba;&quot;&gt;Nav izvēlēts fails&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
   </widget>
   <widget class="QLabel" name="newtitle">
    <property name="geometry">
     <rect>
-     <x>180</x>
+     <x>170</x>
      <y>40</y>
      <width>181</width>
      <height>41</height>
@@ -530,9 +530,9 @@ p, li { white-space: pre-wrap; }
       <colorrole role="Button">
        <brush brushstyle="SolidPattern">
         <color alpha="255">
-         <red>47</red>
-         <green>56</green>
-         <blue>47</blue>
+         <red>9</red>
+         <green>46</green>
+         <blue>33</blue>
         </color>
        </brush>
       </colorrole>
@@ -548,18 +548,18 @@ p, li { white-space: pre-wrap; }
       <colorrole role="Base">
        <brush brushstyle="SolidPattern">
         <color alpha="255">
-         <red>47</red>
-         <green>56</green>
-         <blue>47</blue>
+         <red>9</red>
+         <green>46</green>
+         <blue>33</blue>
         </color>
        </brush>
       </colorrole>
       <colorrole role="Window">
        <brush brushstyle="SolidPattern">
         <color alpha="255">
-         <red>47</red>
-         <green>56</green>
-         <blue>47</blue>
+         <red>9</red>
+         <green>46</green>
+         <blue>33</blue>
         </color>
        </brush>
       </colorrole>
@@ -577,9 +577,9 @@ p, li { white-space: pre-wrap; }
       <colorrole role="Button">
        <brush brushstyle="SolidPattern">
         <color alpha="255">
-         <red>47</red>
-         <green>56</green>
-         <blue>47</blue>
+         <red>9</red>
+         <green>46</green>
+         <blue>33</blue>
         </color>
        </brush>
       </colorrole>
@@ -595,18 +595,18 @@ p, li { white-space: pre-wrap; }
       <colorrole role="Base">
        <brush brushstyle="SolidPattern">
         <color alpha="255">
-         <red>47</red>
-         <green>56</green>
-         <blue>47</blue>
+         <red>9</red>
+         <green>46</green>
+         <blue>33</blue>
         </color>
        </brush>
       </colorrole>
       <colorrole role="Window">
        <brush brushstyle="SolidPattern">
         <color alpha="255">
-         <red>47</red>
-         <green>56</green>
-         <blue>47</blue>
+         <red>9</red>
+         <green>46</green>
+         <blue>33</blue>
         </color>
        </brush>
       </colorrole>
@@ -624,9 +624,9 @@ p, li { white-space: pre-wrap; }
       <colorrole role="Button">
        <brush brushstyle="SolidPattern">
         <color alpha="255">
-         <red>47</red>
-         <green>56</green>
-         <blue>47</blue>
+         <red>9</red>
+         <green>46</green>
+         <blue>33</blue>
         </color>
        </brush>
       </colorrole>
@@ -642,18 +642,18 @@ p, li { white-space: pre-wrap; }
       <colorrole role="Base">
        <brush brushstyle="SolidPattern">
         <color alpha="255">
-         <red>47</red>
-         <green>56</green>
-         <blue>47</blue>
+         <red>9</red>
+         <green>46</green>
+         <blue>33</blue>
         </color>
        </brush>
       </colorrole>
       <colorrole role="Window">
        <brush brushstyle="SolidPattern">
         <color alpha="255">
-         <red>47</red>
-         <green>56</green>
-         <blue>47</blue>
+         <red>9</red>
+         <green>46</green>
+         <blue>33</blue>
         </color>
        </brush>
       </colorrole>
