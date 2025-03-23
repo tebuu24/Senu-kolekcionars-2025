@@ -7,7 +7,7 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QStackedWidget, QPushButt
 class WelcomeScreen(QMainWindow):
     def __init__(self, widget):
         super(WelcomeScreen, self).__init__()
-        loadUi("welcomescreen.ui", self)
+        loadUi("ui/welcomescreen.ui", self)
         self.widget = widget
         self.loginbutton.clicked.connect(self.gotologin)
         self.registerbutton.clicked.connect(self.gotocreate)
@@ -26,7 +26,7 @@ class LoginScreen(QMainWindow):
     
     def __init__(self, widget):
         super(LoginScreen, self).__init__()
-        loadUi("login.ui", self)
+        loadUi("ui/login.ui", self)
         self.widget = widget
         self.loginbutton.clicked.connect(self.loginfunction)
 
@@ -51,7 +51,7 @@ class LoginScreen(QMainWindow):
 class RegisterScreen(QMainWindow):
     def __init__(self, widget):
         super(RegisterScreen, self).__init__()
-        loadUi("register.ui", self)
+        loadUi("ui/register.ui", self)
         self.widget = widget
 
     def registerFunction(self):
