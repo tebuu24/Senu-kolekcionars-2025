@@ -1845,9 +1845,9 @@ color: rgb(199, 218, 186);</string>
        <colorrole role="WindowText">
         <brush brushstyle="SolidPattern">
          <color alpha="255">
-          <red>255</red>
-          <green>62</green>
-          <blue>3</blue>
+          <red>181</red>
+          <green>229</green>
+          <blue>4</blue>
          </color>
         </brush>
        </colorrole>
@@ -1860,12 +1860,21 @@ color: rgb(199, 218, 186);</string>
          </color>
         </brush>
        </colorrole>
+       <colorrole role="Text">
+        <brush brushstyle="SolidPattern">
+         <color alpha="255">
+          <red>181</red>
+          <green>229</green>
+          <blue>4</blue>
+         </color>
+        </brush>
+       </colorrole>
        <colorrole role="ButtonText">
         <brush brushstyle="SolidPattern">
          <color alpha="255">
-          <red>255</red>
-          <green>62</green>
-          <blue>3</blue>
+          <red>181</red>
+          <green>229</green>
+          <blue>4</blue>
          </color>
         </brush>
        </colorrole>
@@ -1892,9 +1901,9 @@ color: rgb(199, 218, 186);</string>
        <colorrole role="WindowText">
         <brush brushstyle="SolidPattern">
          <color alpha="255">
-          <red>255</red>
-          <green>62</green>
-          <blue>3</blue>
+          <red>181</red>
+          <green>229</green>
+          <blue>4</blue>
          </color>
         </brush>
        </colorrole>
@@ -1907,12 +1916,21 @@ color: rgb(199, 218, 186);</string>
          </color>
         </brush>
        </colorrole>
+       <colorrole role="Text">
+        <brush brushstyle="SolidPattern">
+         <color alpha="255">
+          <red>181</red>
+          <green>229</green>
+          <blue>4</blue>
+         </color>
+        </brush>
+       </colorrole>
        <colorrole role="ButtonText">
         <brush brushstyle="SolidPattern">
          <color alpha="255">
-          <red>255</red>
-          <green>62</green>
-          <blue>3</blue>
+          <red>181</red>
+          <green>229</green>
+          <blue>4</blue>
          </color>
         </brush>
        </colorrole>
@@ -1939,9 +1957,9 @@ color: rgb(199, 218, 186);</string>
        <colorrole role="WindowText">
         <brush brushstyle="SolidPattern">
          <color alpha="255">
-          <red>120</red>
-          <green>120</green>
-          <blue>120</blue>
+          <red>181</red>
+          <green>229</green>
+          <blue>4</blue>
          </color>
         </brush>
        </colorrole>
@@ -1954,12 +1972,21 @@ color: rgb(199, 218, 186);</string>
          </color>
         </brush>
        </colorrole>
+       <colorrole role="Text">
+        <brush brushstyle="SolidPattern">
+         <color alpha="255">
+          <red>181</red>
+          <green>229</green>
+          <blue>4</blue>
+         </color>
+        </brush>
+       </colorrole>
        <colorrole role="ButtonText">
         <brush brushstyle="SolidPattern">
          <color alpha="255">
-          <red>120</red>
-          <green>120</green>
-          <blue>120</blue>
+          <red>181</red>
+          <green>229</green>
+          <blue>4</blue>
          </color>
         </brush>
        </colorrole>
@@ -1999,7 +2026,7 @@ color: rgb(199, 218, 186);</string>
     <property name="styleSheet">
      <string notr="true">qproperty-alignment: AlignCenter;
 font: 75 10pt &quot;Comic Sans MS&quot;;
-color: rgb(255, 96, 23);</string>
+color: rgb(181, 229, 4);</string>
     </property>
     <property name="locale">
      <locale language="Latvian" country="Latvia"/>

@@ -66,6 +66,7 @@ class LoginScreen(QMainWindow):
         if result:
             stored_password = result[0]
             if bcrypt.checkpw(password.encode(), stored_password.encode()):
+                self.widget.currentUser = user
                 print("✅ Veiksmīga pieslēgšanās!")
                 self.gotoHome()
             else:
@@ -77,10 +78,9 @@ class LoginScreen(QMainWindow):
 
     # Pāriet uz sākumlapu pēc veiksmīgas pieslēgšanās
     def gotoHome(self):
-        if not hasattr(self.widget, 'homeScreen'):
-            self.widget.homeScreen = HomeScreen(self.widget)
-            self.widget.addWidget(self.widget.homeScreen)
-        self.widget.setCurrentIndex(self.widget.indexOf(self.widget.homeScreen))
+        home = HomeScreen(self.widget, self.widget.currentUser)
+        self.widget.addWidget(home)
+        self.widget.setCurrentIndex(self.widget.indexOf(home))
     
     # Pāriet uz reģistrācijas lapu, ja nospiež pogu
     def gotoRegister(self):
@@ -111,6 +111,10 @@ class RegisterScreen(QMainWindow):
         if password != confirmPassword:
             self.error.setText("❌ Paroles nesakrīt.")
             return
+        
+        if len(user) > 16:
+            self.error.setText("❌ Lietotājvārds nedrīkst pārsniegt 16 rakstzīmes.")
+            return
 
         hashed_password = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
 
@@ -137,31 +141,36 @@ class RegisterScreen(QMainWindow):
 
 # Sākumlapa pēc pieslēgšanās
 class HomeScreen(QMainWindow):
-    def __init__(self, widget):
+    def __init__(self, widget, currentUser):
         super(HomeScreen, self).__init__()
         loadUi("ui/home.ui", self)
         self.widget = widget
         self.logoutbutton.clicked.connect(self.gotoWelcome)
         self.accountbutton.clicked.connect(self.gotoAccount)
+        self.usernamelabel.setText(currentUser)
 
-    # Atgriezties uz WelcomeScreen, ja nospiesta izrakstīšanās poga
+    # Atgriezties uz WelcomeScreen, ja nospiesta izrakstīšanās poga, currentusername tiek dzēsts
     def gotoWelcome(self):
-        self.widget.setCurrentIndex(self.widget.indexOf(self.widget.welcomeScreen))
+        self.widget.currentUser = None
+        welcome = WelcomeScreen(self.widget)
+        self.widget.addWidget(welcome)
+        self.widget.setCurrentIndex(self.widget.indexOf(welcome))
+
 
     # Pāriet uz AccountScreen, ja nospiesta konta poga
     def gotoAccount(self):
-        if not hasattr(self.widget, 'accountScreen'):
-            self.widget.accountScreen = AccountScreen(self.widget)
-            self.widget.addWidget(self.widget.accountScreen)
-        self.widget.setCurrentIndex(self.widget.indexOf(self.widget.accountScreen))
+        account = AccountScreen(self.widget, self.usernamelabel.text())
+        self.widget.addWidget(account)
+        self.widget.setCurrentIndex(self.widget.indexOf(account))
 
 # Konta ekrāns
 class AccountScreen(QMainWindow):
-    def __init__(self, widget):
+    def __init__(self, widget, currentUser):
         super(AccountScreen, self).__init__()
         loadUi("ui/account.ui", self)
         self.widget = widget
         self.changedatabutton.clicked.connect(self.gotoData)
+        self.usernamelabel.setText(currentUser)
 
 # Programmas sākšana
 app = QApplication(sys.argv)

@@ -631,7 +631,7 @@ color: rgb(199, 218, 186);</string>
      <locale language="Latvian" country="Latvia"/>
     </property>
     <property name="text">
-     <string>senotajs02</string>
+     <string/>
     </property>
     <property name="wordWrap">
      <bool>false</bool>
