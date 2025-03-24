@@ -51,9 +51,12 @@ class LoginScreen(QMainWindow):
         if result:
             stored_password = result[0]
             if bcrypt.checkpw(password.encode(), stored_password.encode()):
-                self.widget.currentUser = user
-                print("✅ Veiksmīga pieslēgšanās!")
-                self.gotoHome()
+                if user == "administrators" and password == "8aravika":
+                    self.gotoAdmin()
+                else:
+                    self.widget.currentUser = user
+                    print("✅ Veiksmīga pieslēgšanās!")
+                    self.gotoHome()
             else:
                 self.error.setText("❌ Nepareiza parole vai lietotājvārds.")
         else:
@@ -61,12 +64,24 @@ class LoginScreen(QMainWindow):
 
         conn.close()
 
+        self.usernamefield.clear()
+        self.passwordfield.clear()
+
     def gotoHome(self):
+        self.usernamefield.clear()
+        self.passwordfield.clear()
         home = HomeScreen(self.widget, self.widget.currentUser)
         self.widget.addWidget(home)
         self.widget.setCurrentIndex(self.widget.indexOf(home))
 
+    def gotoAdmin(self):
+        admin = AdminScreen(self.widget)
+        self.widget.addWidget(admin)
+        self.widget.setCurrentIndex(self.widget.indexOf(admin))
+
     def gotoRegister(self):
+        self.usernamefield.clear()
+        self.passwordfield.clear()
         if not hasattr(self.widget, 'registerScreen'):
             self.widget.registerScreen = RegisterScreen(self.widget)
             self.widget.addWidget(self.widget.registerScreen)
@@ -90,8 +105,8 @@ class RegisterScreen(QMainWindow):
             self.error.setText("❌ Visi lauki ir obligāti.")
             return
 
-        if len(user) > 16:
-            self.error.setText("❌ Lietotājvārds nedrīkst pārsniegt 16 rakstzīmes.")
+        if len(user) > 13:
+            self.error.setText("❌ Lietotājvārds nedrīkst pārsniegt 13 rakstzīmes.")
             return
 
         if password != confirmPassword:
@@ -112,9 +127,14 @@ class RegisterScreen(QMainWindow):
         conn.commit()
         conn.close()
 
-        self.error.setText("✅ Reģistrācija veiksmīga!")
+        self.error.setText("✅ Reģistrācija veiksmīga! <br>Lūdzu dodieties uz lapu 'Pieteikties'.")
+        self.usernamefield.clear()
+        self.passwordfield.clear()
+        self.passwordfield_2.clear()
 
     def gotoLogin(self):
+        self.usernamefield.clear()
+        self.passwordfield.clear()
         if not hasattr(self.widget, 'loginScreen'):
             self.widget.loginScreen = LoginScreen(self.widget)
             self.widget.addWidget(self.widget.loginScreen)
@@ -161,6 +181,63 @@ class DataScreen(QMainWindow):
         super(DataScreen, self).__init__()
         loadUi("ui/accountchangedata.ui", self)
         self.widget = widget
+
+    def gotoAccount(self):
+        account = AccountScreen(self.widget, self.widget.currentUser)
+        self.widget.addWidget(account)
+        self.widget.setCurrentIndex(self.widget.indexOf(account))
+
+# Admin ekrāns
+class AdminScreen(QMainWindow):
+    def __init__(self, widget):
+        super(AdminScreen, self).__init__()
+        loadUi("ui/admin.ui", self)
+        self.widget = widget
+        self.logoutbutton.clicked.connect(self.gotoWelcome)
+        self.newsbutton.clicked.connect(self.gotoNews)
+        self.usersbutton.clicked.connect(self.gotoUsers)
+
+    def gotoWelcome(self):
+        self.widget.currentUser = None
+        welcome = WelcomeScreen(self.widget)
+        self.widget.addWidget(welcome)
+        self.widget.setCurrentIndex(self.widget.indexOf(welcome))
+
+    def gotoNews(self):
+        news = NewsScreen(self.widget)
+        self.widget.addWidget(news)
+        self.widget.setCurrentIndex(self.widget.indexOf(news))
+
+    def gotoUsers(self):
+        users = UsersScreen(self.widget)
+        self.widget.addWidget(users)
+        self.widget.setCurrentIndex(self.widget.indexOf(users))
+
+# News ekrāns
+class NewsScreen(QMainWindow):
+    def __init__(self, widget):
+        super(NewsScreen, self).__init__()
+        loadUi("ui/news.ui", self)
+        self.widget = widget
+        self.backbutton.clicked.connect(self.gotoAdmin)
+
+    def gotoAdmin(self):
+        admin = AdminScreen(self.widget)
+        self.widget.addWidget(admin)
+        self.widget.setCurrentIndex(self.widget.indexOf(admin))
+
+# Users ekrāns
+class UsersScreen(QMainWindow):
+    def __init__(self, widget):
+        super(UsersScreen, self).__init__()
+        loadUi("ui/users.ui", self)
+        self.widget = widget
+        self.backbutton.clicked.connect(self.gotoAdmin)
+
+    def gotoAdmin(self):
+        admin = AdminScreen(self.widget)
+        self.widget.addWidget(admin)
+        self.widget.setCurrentIndex(self.widget.indexOf(admin))
 
 # Programmas sākšana
 app = QApplication(sys.argv)
