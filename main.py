@@ -28,15 +28,17 @@ class WelcomeScreen(QMainWindow):
 
     # Pāriet uz pieteikšanās ekrānu
     def gotologin(self):
-        login = LoginScreen(self.widget)
-        self.widget.addWidget(login)
-        self.widget.setCurrentIndex(self.widget.currentIndex() + 1)
+        if not hasattr(self.widget, 'loginScreen'):
+            self.widget.loginScreen = LoginScreen(self.widget)
+            self.widget.addWidget(self.widget.loginScreen)
+        self.widget.setCurrentIndex(self.widget.indexOf(self.widget.loginScreen))
 
     # Pāriet uz reģistrācijas ekrānu
     def gotocreate(self):
-        createAccount = RegisterScreen(self.widget)
-        self.widget.addWidget(createAccount)
-        self.widget.setCurrentIndex(self.widget.currentIndex() + 1)
+        if not hasattr(self.widget, 'registerScreen'):
+            self.widget.registerScreen = RegisterScreen(self.widget)
+            self.widget.addWidget(self.widget.registerScreen)
+        self.widget.setCurrentIndex(self.widget.indexOf(self.widget.registerScreen))
 
 # Pieteikšanās ekrāns
 class LoginScreen(QMainWindow):
@@ -75,15 +77,17 @@ class LoginScreen(QMainWindow):
 
     # Pāriet uz sākumlapu pēc veiksmīgas pieslēgšanās
     def gotoHome(self):
-        home = HomeScreen(self.widget)
-        self.widget.addWidget(home)
-        self.widget.setCurrentIndex(self.widget.currentIndex() + 1)
+        if not hasattr(self.widget, 'homeScreen'):
+            self.widget.homeScreen = HomeScreen(self.widget)
+            self.widget.addWidget(self.widget.homeScreen)
+        self.widget.setCurrentIndex(self.widget.indexOf(self.widget.homeScreen))
     
     # Pāriet uz reģistrācijas lapu, ja nospiež pogu
     def gotoRegister(self):
-        register = RegisterScreen(self.widget)
-        self.widget.addWidget(register)
-        self.widget.setCurrentIndex(self.widget.currentIndex() + 1)
+        if not hasattr(self.widget, 'registerScreen'):
+            self.widget.registerScreen = RegisterScreen(self.widget)
+            self.widget.addWidget(self.widget.registerScreen)
+        self.widget.setCurrentIndex(self.widget.indexOf(self.widget.registerScreen))
 
 # Reģistrācijas ekrāns
 class RegisterScreen(QMainWindow):
@@ -124,11 +128,12 @@ class RegisterScreen(QMainWindow):
 
         self.error.setText("✅ Reģistrācija veiksmīga!")
 
-    # Pāriet uz reģistrācijas lapu, ja nospiež pogu
+    # Pāriet uz pieteikšanās lapu, ja nospiež pogu
     def gotoLogin(self):
-        login = LoginScreen(self.widget)
-        self.widget.addWidget(login)
-        self.widget.setCurrentIndex(self.widget.currentIndex() + 1)
+        if not hasattr(self.widget, 'loginScreen'):
+            self.widget.loginScreen = LoginScreen(self.widget)
+            self.widget.addWidget(self.widget.loginScreen)
+        self.widget.setCurrentIndex(self.widget.indexOf(self.widget.loginScreen))
 
 # Sākumlapa pēc pieslēgšanās
 class HomeScreen(QMainWindow):
@@ -141,15 +146,14 @@ class HomeScreen(QMainWindow):
 
     # Atgriezties uz WelcomeScreen, ja nospiesta izrakstīšanās poga
     def gotoWelcome(self):
-        welcome = WelcomeScreen(self.widget)
-        self.widget.addWidget(welcome)
-        self.widget.setCurrentIndex(self.widget.currentIndex() + 1)
+        self.widget.setCurrentIndex(self.widget.indexOf(self.widget.welcomeScreen))
 
     # Pāriet uz AccountScreen, ja nospiesta konta poga
     def gotoAccount(self):
-        account = AccountScreen(self.widget)
-        self.widget.addWidget(account)
-        self.widget.setCurrentIndex(self.widget.currentIndex() + 1)
+        if not hasattr(self.widget, 'accountScreen'):
+            self.widget.accountScreen = AccountScreen(self.widget)
+            self.widget.addWidget(self.widget.accountScreen)
+        self.widget.setCurrentIndex(self.widget.indexOf(self.widget.accountScreen))
 
 # Konta ekrāns
 class AccountScreen(QMainWindow):
@@ -157,12 +161,16 @@ class AccountScreen(QMainWindow):
         super(AccountScreen, self).__init__()
         loadUi("ui/account.ui", self)
         self.widget = widget
+        self.changedatabutton.clicked.connect(self.gotoData)
 
 # Programmas sākšana
 app = QApplication(sys.argv)
 widget = QStackedWidget()
-welcome = WelcomeScreen(widget)
-widget.addWidget(welcome)
+
+# Pievieno sākuma ekrānu un saglabā to kā atribūtu
+widget.welcomeScreen = WelcomeScreen(widget)
+widget.addWidget(widget.welcomeScreen)
+
 widget.setFixedHeight(850)
 widget.setFixedWidth(521)
 widget.show()
