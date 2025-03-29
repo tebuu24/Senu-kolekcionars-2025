@@ -471,7 +471,7 @@ p, li { white-space: pre-wrap; }
    <widget class="QPushButton" name="addbutton">
     <property name="geometry">
      <rect>
-      <x>70</x>
+      <x>280</x>
       <y>720</y>
       <width>171</width>
       <height>71</height>
@@ -751,7 +751,7 @@ text-align: center;</string>
    <widget class="QPushButton" name="deletebutton">
     <property name="geometry">
      <rect>
-      <x>280</x>
+      <x>70</x>
       <y>720</y>
       <width>171</width>
       <height>71</height>

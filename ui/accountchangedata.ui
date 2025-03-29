@@ -237,7 +237,7 @@ color: rgb(199, 218, 186);</string>
      <number>0</number>
     </property>
    </widget>
-   <widget class="QPushButton" name="deleteaccbutton">
+   <widget class="QPushButton" name="changedatabutton">
     <property name="geometry">
      <rect>
       <x>50</x>
@@ -1093,7 +1093,7 @@ color: rgb(199, 218, 186);</string>
      <string>Jaunā parole atkārtoti</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="registerbutton">
+   <widget class="QPushButton" name="cancelbutton">
     <property name="geometry">
      <rect>
       <x>170</x>

@@ -1,11 +1,12 @@
 import sys
 import sqlite3
 import bcrypt
+import time
+import re
 from PyQt5.uic import loadUi
-from PyQt5.QtWidgets import QApplication, QMainWindow, QStackedWidget
-import datubaze  # Import the new database file
+from PyQt5.QtWidgets import QApplication, QMainWindow, QStackedWidget, QFileDialog, QMessageBox, QProgressBar
 
-# Galvenais ekrāns (sākumlapa, kur izvēlēties pieteikšanos vai reģistrāciju)
+# Galvenais ekrāns
 class WelcomeScreen(QMainWindow):
     def __init__(self, widget):
         super(WelcomeScreen, self).__init__()
@@ -149,6 +150,8 @@ class HomeScreen(QMainWindow):
         self.logoutbutton.clicked.connect(self.gotoWelcome)
         self.accountbutton.clicked.connect(self.gotoAccount)
         self.usernamelabel.setText(currentUser)
+        self.newbutton.clicked.connect(self.gotoNewUpload)
+        self.collectionbutton.clicked.connect(self.gotoCollection)
 
     def gotoWelcome(self):
         self.widget.currentUser = None
@@ -161,6 +164,16 @@ class HomeScreen(QMainWindow):
         self.widget.addWidget(account)
         self.widget.setCurrentIndex(self.widget.indexOf(account))
 
+    def gotoNewUpload(self):
+        newupload = NewUploadScreen(self.widget)
+        self.widget.addWidget(newupload)
+        self.widget.setCurrentIndex(self.widget.indexOf(newupload))
+
+    def gotoCollection(self):
+        collection = CollectionScreen(self.widget)
+        self.widget.addWidget(collection)
+        self.widget.setCurrentIndex(self.widget.indexOf(collection))
+
 # Konta ekrāns
 class AccountScreen(QMainWindow):
     def __init__(self, widget, currentUser):
@@ -169,23 +182,109 @@ class AccountScreen(QMainWindow):
         self.widget = widget
         self.changedatabutton.clicked.connect(self.gotoData)
         self.usernamelabel.setText(currentUser)
+        self.homebutton.clicked.connect(self.gotoHome)
 
     def gotoData(self):
         data = DataScreen(self.widget)
         self.widget.addWidget(data)
         self.widget.setCurrentIndex(self.widget.indexOf(data))
+    
+    def gotoHome(self):
+        home = HomeScreen(self.widget, self.widget.currentUser)
+        self.widget.addWidget(home)
+        self.widget.setCurrentIndex(self.widget.indexOf(home))
 
-# Labot konta datus
+# Labot konta datus, jauns lietotājvārds vai parole (vai abi) 
 class DataScreen(QMainWindow):
     def __init__(self, widget):
         super(DataScreen, self).__init__()
         loadUi("ui/accountchangedata.ui", self)
         self.widget = widget
+        self.current_username = self.widget.currentUser
+
+        self.homebutton.clicked.connect(self.gotoHome)
+        self.cancelbutton.clicked.connect(self.gotoAccount)
+        self.changedatabutton.clicked.connect(self.changeData)
+
+        # Pre-fill the username field with the current username
+        self.usernamefield.setText(self.current_username)
+
+    def gotoHome(self):
+        home = HomeScreen(self.widget, self.widget.currentUser)
+        self.widget.addWidget(home)
+        self.widget.setCurrentIndex(self.widget.indexOf(home))
 
     def gotoAccount(self):
         account = AccountScreen(self.widget, self.widget.currentUser)
         self.widget.addWidget(account)
         self.widget.setCurrentIndex(self.widget.indexOf(account))
+
+    def changeData(self):
+        new_username = self.usernamefield.text().strip()
+        current_password = self.currentpasswordfield.text().strip()
+        new_password = self.newpasswordfield.text().strip()
+        confirm_password = self.newpasswordfield_2.text().strip()
+
+        conn = sqlite3.connect("lietotaji.db")
+        cur = conn.cursor()
+
+        # Fetch current password from DB
+        cur.execute("SELECT password FROM lietotaji WHERE username = ?", (self.current_username,))
+        result = cur.fetchone()
+
+        if not result:
+            self.error.setText("❌ Lietotājs netika atrasts.")
+            conn.close()
+            return
+
+        stored_password = result[0]
+        if not bcrypt.checkpw(current_password.encode(), stored_password.encode()):
+            self.error.setText("❌ Nepareiza pašreizējā parole.")
+            conn.close()
+            return
+
+        # Ja ir jauns lietotājvards
+        if new_username != self.current_username:
+            if not re.match("^[a-zA-Z0-9_]+$", new_username):
+                self.error.setText("❌ Lietotājvārds var saturēt tikai burtus, ciparus un '_'.")
+                conn.close()
+                return
+            if len(new_username) > 13:
+                self.error.setText("❌ Lietotājvārds nedrīkst pārsniegt 13 rakstzīmes.")
+                conn.close()
+                return
+            cur.execute("SELECT username FROM lietotaji WHERE username = ?", (new_username,))
+            if cur.fetchone():
+                self.error.setText("❌ Lietotājvārds jau eksistē.")
+                conn.close()
+                return
+
+        # Ja ir jauna parole
+        if new_password or confirm_password:
+            if new_password != confirm_password:
+                self.error.setText("❌ Jaunās paroles nesakrīt.")
+                conn.close()
+                return
+            if new_password == current_password:
+                self.error.setText("❌ Jaunā parole nevar būt tāda pati kā vecā parole.")
+                conn.close()
+                return
+            hashed_new_password = bcrypt.hashpw(new_password.encode(), bcrypt.gensalt()).decode()
+        else:
+            hashed_new_password = stored_password
+
+        # Dati uz datubāzi
+        cur.execute("UPDATE lietotaji SET username = ?, password = ? WHERE username = ?",
+                    (new_username, hashed_new_password, self.current_username))
+        conn.commit()
+        conn.close()
+
+        self.widget.currentUser = new_username
+        self.error.setText("✅ Dati veiksmīgi atjaunināti!")
+        self.currentpasswordfield.clear()
+        self.newpasswordfield.clear()
+        self.newpasswordfield_2.clear()
+
 
 # Admin ekrāns
 class AdminScreen(QMainWindow):
@@ -226,18 +325,145 @@ class NewsScreen(QMainWindow):
         self.widget.addWidget(admin)
         self.widget.setCurrentIndex(self.widget.indexOf(admin))
 
-# Users ekrāns
+# Lietotāju pāŗvaldības ekrāns
 class UsersScreen(QMainWindow):
     def __init__(self, widget):
         super(UsersScreen, self).__init__()
         loadUi("ui/users.ui", self)
         self.widget = widget
         self.backbutton.clicked.connect(self.gotoAdmin)
+        self.loadUsers()
 
     def gotoAdmin(self):
         admin = AdminScreen(self.widget)
         self.widget.addWidget(admin)
         self.widget.setCurrentIndex(self.widget.indexOf(admin))
+
+    def loadUsers(self):
+        conn = sqlite3.connect("lietotaji.db")
+        cur = conn.cursor()
+        cur.execute("SELECT id, username FROM lietotaji")
+        users = cur.fetchall()
+        conn.close()
+
+        self.userstable.setRowCount(len(users))
+        self.userstable.setColumnCount(2)
+        self.userstable.setHorizontalHeaderLabels(["ID", "Lietotājvārds"])
+
+# Lietotāja kolekcijas ekrāns
+class CollectionScreen(QMainWindow):
+    def __init__(self, widget):
+        super(CollectionScreen, self).__init__()
+        loadUi("ui/collection.ui", self)
+        self.widget = widget
+        self.homebutton.clicked.connect(self.gotoHome)
+
+    def gotoHome(self):
+        home = HomeScreen(self.widget, self.widget.currentUser)
+        self.widget.addWidget(home)
+        self.widget.setCurrentIndex(self.widget.indexOf(home))
+
+
+# Jaunas sēnes ekrāns
+class NewUploadScreen(QMainWindow):
+    def __init__(self, widget):
+        super(NewUploadScreen, self).__init__(widget)
+        loadUi("ui/newupload.ui", self)
+        self.widget = widget
+        self.homebutton.clicked.connect(self.gotoHome)
+        self.uploadbutton.clicked.connect(self.upload) 
+
+    def upload(self):
+        file_path, _ = QFileDialog.getOpenFileName(self, "Izvēlies attēlu", "", "Images (*.png *.jpg *.jpeg)")
+        
+        if not file_path:
+            self.error.setText("❌ Lūdzu izvēlieties failu.")
+            return
+        
+        if not file_path.lower().endswith(('.png', '.jpg', '.jpeg')):
+            self.error.setText("❌ Failam jābūt .jpg, .jpeg vai .png formātā.")
+            return
+
+        self.gotoNewWait(file_path)
+
+    def gotoHome(self):
+        home = HomeScreen(self.widget, self.widget.currentUser)
+        self.widget.addWidget(home)
+        self.widget.setCurrentIndex(self.widget.indexOf(home))
+
+    def gotoNewWait(self, file_path):
+        wait = NewWaitScreen(self.widget, file_path)
+        self.widget.addWidget(wait)
+        self.widget.setCurrentIndex(self.widget.indexOf(wait))
+
+# Augšupielādes gaidīšanas ekrāns
+class NewWaitScreen(QMainWindow):
+    def __init__(self, widget, file_path):
+        super(NewWaitScreen, self).__init__(widget)
+        loadUi("ui/newwait.ui", self)
+
+        self.file_path = file_path
+        self.homebutton.clicked.connect(self.gotoHome)
+        self.cancelbutton.clicked.connect(self.gotoNewUpload)
+        self.updateProgressBar()
+
+    #temporary 5sek progress bar ( nezinu cik ilgi aizņem api vēl)
+    def updateProgressBar(self):
+        for i in range(0, 101, 20):
+            time.sleep(0.5)
+            self.progressBar.setValue(i)
+
+        self.gotoResults()
+
+    def gotoResults(self):
+        results = NewResults(self.widget, self.file_path)
+        self.widget.addWidget(results)
+        self.widget.setCurrentIndex(self.widget.indexOf(results))
+
+    def gotoHome(self):
+        home = HomeScreen(self.widget, self.widget.currentUser)
+        self.widget.addWidget(home)
+        self.widget.setCurrentIndex(self.widget.indexOf(home))
+
+    def gotoNewUpload(self):
+        newupload = NewUploadScreen(self.widget)
+        self.widget.addWidget(newupload)
+        self.widget.setCurrentIndex(self.widget.indexOf(newupload))
+
+# Rezultātu ekrāns
+class NewResults(QMainWindow):
+    def __init__(self, widget, file_path):
+        super(NewResults, self).__init__(widget)
+        loadUi("ui/newresults.ui", self)
+
+        self.file_path = file_path
+        self.progressBar.setValue(100)
+
+        self.homebutton.clicked.connect(self.gotoHome)
+        self.addbutton.clicked.connect(self.addToCollection)
+        self.deletebutton.clicked.connect(self.deleteEntry)
+
+    def gotoHome(self):
+        home = HomeScreen(self.widget, self.widget.currentUser)
+        self.widget.addWidget(home)
+        self.widget.setCurrentIndex(self.widget.indexOf(home))
+
+    
+    def addToCollection(self):
+        conn = sqlite3.connect("lietotaji.db")
+        cur = conn.cursor()
+
+        cur.execute("INSERT INTO kolekcija (username, image_path) VALUES (?, ?)", (self.currentUser, self.file_path))
+        conn.commit()
+        conn.close()
+
+        QMessageBox.information(self, "Veiksmīgi", "✅ Attēls pievienots kolekcijai!")
+        self.gotoHome()
+
+    def deleteEntry(self):
+        QMessageBox.warning(self, "Atcelts", "❌ Attēls netika saglabāts.")
+        self.gotoNewUpload()
+
 
 # Programmas sākšana
 app = QApplication(sys.argv)
