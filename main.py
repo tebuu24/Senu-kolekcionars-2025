@@ -6,7 +6,7 @@ import requests
 import re
 import os
 from PyQt5.uic import loadUi
-from PyQt5.QtWidgets import QApplication, QMainWindow, QStackedWidget, QFileDialog, QMessageBox, QProgressBar, QLabel, QLineEdit
+from PyQt5.QtWidgets import QApplication, QMainWindow, QStackedWidget, QFileDialog, QMessageBox, QProgressBar, QLabel, QLineEdit, QMessageBox, QDialog
 from PyQt5.QtGui import QPixmap, QImage
 
 
@@ -50,9 +50,9 @@ class LoginScreen(QMainWindow):
             self.error.setText("❌ Lietotājvārds un parole nedrīkst būt tukši.")
             return
 
-        conn = sqlite3.connect("lietotaji.db")
+        conn = sqlite3.connect("senu_kolekcionars.db")
         cur = conn.cursor()
-        cur.execute("SELECT password FROM lietotaji WHERE username = ?", (user,))
+        cur.execute("SELECT parole FROM lietotaji WHERE lietotajvards = ?", (user,))
         result = cur.fetchone()
 
         if result:
@@ -114,7 +114,7 @@ class RegisterScreen(QMainWindow):
             self.error.setText("❌ Visi lauki ir obligāti.")
             return
 
-        if len(user) > 13:
+        if len(user) > 20:
             self.error.setText("❌ Lietotājvārds nedrīkst pārsniegt 13 rakstzīmes.")
             return
 
@@ -124,15 +124,15 @@ class RegisterScreen(QMainWindow):
 
         hashed_password = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
 
-        conn = sqlite3.connect("lietotaji.db")
+        conn = sqlite3.connect("senu_kolekcionars.db")
         cur = conn.cursor()
-        cur.execute("SELECT username FROM lietotaji WHERE username = ?", (user,))
+        cur.execute("SELECT lietotajvards FROM lietotaji WHERE lietotajvards = ?", (user,))
         if cur.fetchone():
             self.error.setText("❌ Lietotājvārds jau eksistē.")
             conn.close()
             return
 
-        cur.execute("INSERT INTO lietotaji (username, password) VALUES (?, ?)", (user, hashed_password))
+        cur.execute("INSERT INTO lietotaji (lietotajvards, parole) VALUES (?, ?)", (user, hashed_password))
         conn.commit()
         conn.close()
 
@@ -219,9 +219,11 @@ class AccountScreen(QMainWindow):
         super(AccountScreen, self).__init__()
         loadUi("ui/account.ui", self)
         self.widget = widget
+        self.currentUser = currentUser
         self.changedatabutton.clicked.connect(self.gotoData)
         self.usernamelabel.setText(currentUser)
         self.homebutton.clicked.connect(self.gotoHome)
+        self.deleteaccbutton.clicked.connect(self.showDeleteConfirmation)
 
     def gotoData(self):
         data = DataScreen(self.widget)
@@ -232,6 +234,44 @@ class AccountScreen(QMainWindow):
         home = HomeScreen(self.widget, self.widget.currentUser)
         self.widget.addWidget(home)
         self.widget.setCurrentIndex(self.widget.indexOf(home))
+
+        
+    # Konta dzēšanai ir apstiprinājums
+    def showDeleteConfirmation(self):
+        self.dialog = QDialog(self)
+        loadUi('ui/confirm.ui', self.dialog)
+        
+        self.dialog.yesbutton.clicked.connect(self.deleteAccount)
+        self.dialog.nobutton.clicked.connect(self.dialog.reject)
+        
+        self.dialog.exec_()
+
+    def deleteAccount(self):
+        try:
+            connection = sqlite3.connect("senu_kolekcionars.db")
+            cursor = connection.cursor()
+
+            cursor.execute("DELETE FROM lietotaji WHERE lietotajvards=?", (self.currentUser,))
+            connection.commit()
+
+            QMessageBox.information(self, '✅', 'Konts tika veiksmīgi dzēsts.')
+
+            self.gotoWelcome()
+
+        except Exception as e:
+            QMessageBox.critical(self, '❌', f"Kļūda dzēšot kontu: {e}")
+
+        finally:
+            connection.close()
+            self.dialog.accept()
+
+    def gotoWelcome(self):
+        self.widget.currentUser = None
+        welcome = WelcomeScreen(self.widget)
+        self.widget.addWidget(welcome)
+        self.widget.setCurrentIndex(self.widget.indexOf(welcome))
+
+
 
 # Labot konta datus, jauns lietotājvārds vai parole (vai abi) 
 class DataScreen(QMainWindow):
@@ -266,10 +306,10 @@ class DataScreen(QMainWindow):
         new_password = self.newpasswordfield.text().strip()
         confirm_password = self.newpasswordfield_2.text().strip()
 
-        conn = sqlite3.connect("lietotaji.db")
+        conn = sqlite3.connect("senu_kolekcionars.db")
         cur = conn.cursor()
 
-        cur.execute("SELECT password FROM lietotaji WHERE username = ?", (self.current_username,))
+        cur.execute("SELECT parole FROM lietotaji WHERE lietotajvards = ?", (self.current_username,))
         result = cur.fetchone()
 
         if not result:
@@ -293,7 +333,7 @@ class DataScreen(QMainWindow):
                 self.error.setText("❌ Lietotājvārds nedrīkst pārsniegt 13 rakstzīmes.")
                 conn.close()
                 return
-            cur.execute("SELECT username FROM lietotaji WHERE username = ?", (new_username,))
+            cur.execute("SELECT lietotajvards FROM lietotaji WHERE lietotajvards = ?", (new_username,))
             if cur.fetchone():
                 self.error.setText("❌ Lietotājvārds jau eksistē.")
                 conn.close()
@@ -314,7 +354,7 @@ class DataScreen(QMainWindow):
             hashed_new_password = stored_password
 
         # Dati uz datubāzi
-        cur.execute("UPDATE lietotaji SET username = ?, password = ? WHERE username = ?",
+        cur.execute("UPDATE lietotaji SET lietotajvards = ?, parole = ? WHERE lietotajvards = ?",
                     (new_username, hashed_new_password, self.current_username))
         conn.commit()
         conn.close()
@@ -380,9 +420,9 @@ class UsersScreen(QMainWindow):
         self.widget.setCurrentIndex(self.widget.indexOf(admin))
 
     def loadUsers(self):
-        conn = sqlite3.connect("lietotaji.db")
+        conn = sqlite3.connect("senu_kolekcionars.db")
         cur = conn.cursor()
-        cur.execute("SELECT id, username FROM lietotaji")
+        cur.execute("SELECT id, lietotajvards FROM lietotaji")
         users = cur.fetchall()
         conn.close()
 
@@ -505,10 +545,10 @@ class NewResults(QMainWindow):
     
 def addToCollection(self):
     try:
-        conn = sqlite3.connect("lietotaji.db")
+        conn = sqlite3.connect("senu_kolekcionars.db")
         cur = conn.cursor()
 
-        cur.execute("INSERT INTO kolekcija (username, image_path) VALUES (?, ?)", (self.widget.currentUser, self.file_path))
+        cur.execute("INSERT INTO kolekcija (lietotajvards, attels) VALUES (?, ?)", (self.widget.currentUser, self.file_path))
         conn.commit()
         conn.close()
 

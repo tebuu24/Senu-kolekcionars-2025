@@ -1,14 +1,14 @@
 import sqlite3
 
 def initialize_database():
-    conn = sqlite3.connect("lietotaji.db")
+    conn = sqlite3.connect("senu_kolekcionars.db")
     cur = conn.cursor()
 
     cur.execute("""
         CREATE TABLE IF NOT EXISTS lietotaji (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            username TEXT UNIQUE NOT NULL,
-            password TEXT NOT NULL
+            lietotajvards TEXT UNIQUE NOT NULL,
+            parole TEXT NOT NULL
         )
     """)
 
