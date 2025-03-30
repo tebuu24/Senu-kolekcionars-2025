@@ -61,7 +61,7 @@ class LoginScreen(QMainWindow):
                 self.widget.currentUser = user
                 print("✅ Veiksmīga pieslēgšanās!")
 
-                if user == "administrators":  # Ja lietotājvārds ir "administrators"
+                if user == "administrators":
                     self.gotoAdmin()
                 else:
                     self.gotoHome()
