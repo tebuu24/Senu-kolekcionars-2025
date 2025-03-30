@@ -11,9 +11,7 @@ from PyQt5.QtGui import QPixmap, QImage
 from PyQt5.QtGui import QStandardItemModel, QStandardItem
 from PyQt5.QtWidgets import QMainWindow
 from PyQt5.QtCore import Qt
-
-
-import sqlite3
+from PyQt5.QtWidgets import QMainWindow, QTableWidgetItem
 from datetime import datetime
 
 # Galvenais ekrāns
@@ -496,6 +494,8 @@ class NewsScreen(QMainWindow):
 
 
 # Lietotāju pāŗvaldības ekrāns
+
+
 class UsersScreen(QMainWindow):
     def __init__(self, widget):
         super(UsersScreen, self).__init__()
@@ -516,9 +516,25 @@ class UsersScreen(QMainWindow):
         users = cur.fetchall()
         conn.close()
 
-        self.userstable.setRowCount(len(users))
-        self.userstable.setColumnCount(2)
-        self.userstable.setHorizontalHeaderLabels(["ID", "Lietotājvārds"])
+        # Ja ir lietotāji, mēs ielādēsim tos tabulā
+        if users:
+            # Uzstādām tabulas izmērus atbilstoši saņemtajiem lietotājiem
+            self.userstable.setRowCount(len(users))  # Iestata rindu skaitu
+            self.userstable.setColumnCount(2)  # 2 kolonnas (ID, Lietotājvārds)
+            self.userstable.setHorizontalHeaderLabels(["ID", "Lietotājvārds"])
+
+            # Piepildām tabulu ar datiem
+            for row_index, user in enumerate(users):
+                # Iestatām katru rindu ar datiem
+                self.userstable.setItem(row_index, 0, QTableWidgetItem(str(user[0])))  # ID
+                self.userstable.setItem(row_index, 1, QTableWidgetItem(user[1]))  # Lietotājvārds
+        else:
+            # Ja nav lietotāju, mēs varam pievienot brīdinājuma ziņu
+            self.userstable.setRowCount(1)
+            self.userstable.setColumnCount(1)
+            self.userstable.setHorizontalHeaderLabels(["Nav lietotāju"])
+            self.userstable.setItem(0, 0, QTableWidgetItem("Nav lietotāju datu."))
+
 
 # Lietotāja kolekcijas ekrāns
 class CollectionScreen(QMainWindow):
