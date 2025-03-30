@@ -114,7 +114,7 @@ class RegisterScreen(QMainWindow):
             self.error.setText("❌ Visi lauki ir obligāti.")
             return
 
-        if len(user) > 20:
+        if len(user) > 13:
             self.error.setText("❌ Lietotājvārds nedrīkst pārsniegt 13 rakstzīmes.")
             return
 
@@ -452,6 +452,9 @@ class NewUploadScreen(QMainWindow):
         self.widget = widget
         self.homebutton.clicked.connect(self.gotoHome)
         self.uploadbutton.clicked.connect(self.upload) 
+        self.showNormal()
+        print(f"Window geometry: {self.geometry()}")
+
 
     def upload(self):
         try:
@@ -502,7 +505,6 @@ class NewWaitScreen(QMainWindow):
         self.homebutton.clicked.connect(self.gotoHome)
         self.cancelbutton.clicked.connect(self.gotoNewUpload)
         
-        # Start progress bar update in a separate thread
         self.progress_thread = ProgressThread()
         self.progress_thread.progress_signal.connect(self.updateProgressBar)
         self.progress_thread.start()
