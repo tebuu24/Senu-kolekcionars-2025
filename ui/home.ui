@@ -1107,9 +1107,9 @@ color: rgb(199, 218, 186);</string>
    <widget class="QLabel" name="laikapstakli">
     <property name="geometry">
      <rect>
-      <x>190</x>
+      <x>180</x>
       <y>200</y>
-      <width>281</width>
+      <width>261</width>
       <height>51</height>
      </rect>
     </property>
@@ -1297,22 +1297,22 @@ color: rgb(199, 218, 186);</string>
    <widget class="QLabel" name="weathericon">
     <property name="geometry">
      <rect>
-      <x>90</x>
+      <x>110</x>
       <y>190</y>
-      <width>80</width>
-      <height>80</height>
+      <width>64</width>
+      <height>64</height>
      </rect>
     </property>
     <property name="minimumSize">
      <size>
-      <width>80</width>
-      <height>80</height>
+      <width>64</width>
+      <height>64</height>
      </size>
     </property>
     <property name="maximumSize">
      <size>
-      <width>80</width>
-      <height>80</height>
+      <width>64</width>
+      <height>64</height>
      </size>
     </property>
     <property name="palette">

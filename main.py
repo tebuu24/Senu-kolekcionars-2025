@@ -6,8 +6,9 @@ import requests
 import re
 import os
 from PyQt5.uic import loadUi
-from PyQt5.QtWidgets import QApplication, QMainWindow, QStackedWidget, QFileDialog, QMessageBox, QProgressBar, QLabel
+from PyQt5.QtWidgets import QApplication, QMainWindow, QStackedWidget, QFileDialog, QMessageBox, QProgressBar, QLabel, QLineEdit
 from PyQt5.QtGui import QPixmap, QImage
+
 
 # Galvenais ekrāns
 class WelcomeScreen(QMainWindow):
@@ -38,6 +39,8 @@ class LoginScreen(QMainWindow):
         self.widget = widget
         self.loginbutton.clicked.connect(self.loginfunction)
         self.registerbutton_2.clicked.connect(self.gotoRegister)
+        self.passwordfield.setEchoMode(QLineEdit.Password)
+
 
     def loginfunction(self):
         user = self.usernamefield.text().strip()
@@ -99,6 +102,8 @@ class RegisterScreen(QMainWindow):
         self.widget = widget
         self.registerbutton.clicked.connect(self.registerFunction)
         self.loginbutton_2.clicked.connect(self.gotoLogin)
+        self.passwordfield.setEchoMode(QLineEdit.Password)
+        self.passwordfield_2.setEchoMode(QLineEdit.Password)
 
     def registerFunction(self):
         user = self.usernamefield.text().strip()
@@ -235,12 +240,14 @@ class DataScreen(QMainWindow):
         loadUi("ui/accountchangedata.ui", self)
         self.widget = widget
         self.current_username = self.widget.currentUser
+        self.currentpasswordfield.setEchoMode(QLineEdit.Password)
+        self.newpasswordfield.setEchoMode(QLineEdit.Password)
+        self.newpasswordfield_2.setEchoMode(QLineEdit.Password)
 
         self.homebutton.clicked.connect(self.gotoHome)
         self.cancelbutton.clicked.connect(self.gotoAccount)
         self.changedatabutton.clicked.connect(self.changeData)
 
-        # Pre-fill the username field with the current username
         self.usernamefield.setText(self.current_username)
 
     def gotoHome(self):
@@ -262,7 +269,6 @@ class DataScreen(QMainWindow):
         conn = sqlite3.connect("lietotaji.db")
         cur = conn.cursor()
 
-        # Fetch current password from DB
         cur.execute("SELECT password FROM lietotaji WHERE username = ?", (self.current_username,))
         result = cur.fetchone()
 
