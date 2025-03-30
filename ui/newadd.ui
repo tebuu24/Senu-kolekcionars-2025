@@ -1640,7 +1640,7 @@ background-color: rgb(66, 88, 56);</string>
 background-color: rgb(56, 67, 56);</string>
     </property>
     <property name="text">
-     <string>dd.mm.gggg</string>
+     <string>dd/mm/gggg</string>
     </property>
    </widget>
    <widget class="QLabel" name="questionlabel_3">

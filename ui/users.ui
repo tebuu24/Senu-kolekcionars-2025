@@ -50,7 +50,7 @@ background-color: rgb(66, 88, 56);
 color: rgb(199, 218, 186);</string>
     </property>
     <property name="text">
-     <string>atpakal</string>
+     <string>atpakaļ</string>
     </property>
    </widget>
    <widget class="QLabel" name="userstitle">
@@ -1003,6 +1003,84 @@ background-color: rgb(66, 88, 56);</string>
       <family>OCR A Extended</family>
       <pointsize>12</pointsize>
      </font>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="newsbutton">
+    <property name="geometry">
+     <rect>
+      <x>400</x>
+      <y>70</y>
+      <width>91</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>1</width>
+      <height>1</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>171</width>
+      <height>71</height>
+     </size>
+    </property>
+    <property name="font">
+     <font>
+      <family>Comic Sans MS</family>
+      <pointsize>10</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border-radius: 10px;
+background-color: rgb(72, 108, 64);
+color: rgb(199, 218, 186);</string>
+    </property>
+    <property name="locale">
+     <locale language="Latvian" country="Latvia"/>
+    </property>
+    <property name="text">
+     <string>Ziņot</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="deletebutton">
+    <property name="geometry">
+     <rect>
+      <x>400</x>
+      <y>110</y>
+      <width>91</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>1</width>
+      <height>1</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>171</width>
+      <height>71</height>
+     </size>
+    </property>
+    <property name="font">
+     <font>
+      <family>Comic Sans MS</family>
+      <pointsize>10</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border-radius: 10px;
+background-color: rgb(170, 0, 0);
+color: rgb(199, 218, 186);</string>
+    </property>
+    <property name="locale">
+     <locale language="Latvian" country="Latvia"/>
+    </property>
+    <property name="text">
+     <string>Dzēst</string>
     </property>
    </widget>
   </widget>

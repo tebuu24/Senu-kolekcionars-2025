@@ -448,63 +448,168 @@ class CollectionScreen(QMainWindow):
 # Jaunas sēnes ekrāns
 class NewUploadScreen(QMainWindow):
     def __init__(self, widget):
-        super(NewUploadScreen, self).__init__(widget)
+        super(NewUploadScreen, self).__init__()
         loadUi("ui/newupload.ui", self)
         self.widget = widget
         self.homebutton.clicked.connect(self.gotoHome)
-        self.uploadbutton.clicked.connect(self.upload) 
-        self.showNormal()
-        print(f"Window geometry: {self.geometry()}")
-
+        self.uploadbutton.clicked.connect(self.upload)
+        self.error.setText("")  # Clear error label
 
     def upload(self):
-        try:
-            file_path, _ = QFileDialog.getOpenFileName(self, "Izvēlies attēlu", "", "Images (*.png *.jpg *.jpeg)")
-            
-            if not file_path:
-                self.error.setText("❌ Lūdzu izvēlieties failu.")
-                return
-            
-            if not file_path.lower().endswith(('.png', '.jpg', '.jpeg')):
-                self.error.setText("❌ Failam jābūt .jpg, .jpeg vai .png formātā.")
-                return
-            self.gotoAdd
+        file_path, _ = QFileDialog.getOpenFileName(self, "Izvēlies attēlu", "", "Images (*.png *.jpg *.jpeg)")
+        
+        if not file_path:
+            self.error.setText("❌ Lūdzu izvēlieties failu.")
+            return
+        
+        if not file_path.lower().endswith(('.png', '.jpg', '.jpeg')):
+            self.error.setText("❌ Failam jābūt .jpg, .jpeg vai .png formātā.")
+            return
+        
+        # Check file size (optional, 5MB limit)
+        if os.path.getsize(file_path) > 5 * 1024 * 1024:
+            self.error.setText("❌ Faila izmērs ir pārāk liels (maks. 5MB).")
+            return
 
-        except Exception as e:
-            self.error.setText(f"❌ Kļūda faila apstrādē: {str(e)}")
-            print(f"Error during file upload: {e}")
-
+        # Proceed to the next screen
+        self.gotoAdd(file_path)
 
     def gotoHome(self):
         home = HomeScreen(self.widget, self.widget.currentUser)
         self.widget.addWidget(home)
         self.widget.setCurrentIndex(self.widget.indexOf(home))
 
-    def gotoAdd(self):
-        add = AddScreen(self.widget, self.widget.currentUser)
-        self.widget.addWidget(add)
-        self.widget.setCurrentIndex(self.widget.indexOf(add))
+    def gotoAdd(self, file_path):
+        add_screen = NewAddScreen(self.widget, file_path)
+        self.widget.addWidget(add_screen)
+        self.widget.setCurrentIndex(self.widget.indexOf(add_screen))
 
 
 
-class AddScreen(QMainWindow):
+
+class NewAddScreen(QMainWindow):
     def __init__(self, widget, file_path):
-        super(AddScreen, self).__init__(widget)
-        loadUi("ui/newwait.ui", self)
-
+        super(NewAddScreen, self).__init__()
+        loadUi("ui/newadd.ui", self)
+        self.widget = widget
         self.file_path = file_path
-        self.homebutton.clicked.connect(self.gotoHome)
-        self.cancelbutton.clicked.connect(self.gotoNewUpload)
-    
+        self.error.setText("")  # Clear error label
 
-    def gotoHome(self):
-        home = HomeScreen(self.widget, self.widget.currentUser)
-        self.widget.addWidget(home)
-        self.widget.setCurrentIndex(self.widget.indexOf(home))
-    def gotoNewUpload(self):
+        self.loadComboBoxes()  # Load data into comboboxes
+
+        self.addbutton.clicked.connect(self.addToDatabase)
+        self.deletebutton.clicked.connect(self.gotoUpload)
+
+        self.datefield.setPlaceholderText("dd.mm.gggg")
+
+    def loadComboBoxes(self):
+        """Load mushroom names and locations from the database into comboboxes."""
+        conn = sqlite3.connect("senu_kolekcionars.db")
+        cur = conn.cursor()
+
+        # Fill name combo box
+        cur.execute("SELECT nosaukums FROM senes")
+        names = cur.fetchall()
+        self.namecombo.addItems([name[0] for name in names])
+
+        # Fill location combo box
+        cur.execute("SELECT nosaukums FROM lokacija")
+        locations = cur.fetchall()
+        self.locationcombo.addItems([loc[0] for loc in locations])
+
+        conn.close()
+
+    def validateDate(self, date_text):
+        """Check if the date format is valid (dd.mm.yyyy)."""
+        import datetime
+        try:
+            datetime.datetime.strptime(date_text, "%d.%m.%Y")
+            return True
+        except ValueError:
+            return False
+
+    def addToDatabase(self):
+        selected_name = self.namecombo.currentText()
+        selected_location = self.locationcombo.currentText()
+        date_text = self.datefield.text().strip()
+
+        if not selected_name or not selected_location or not date_text:
+            self.error.setText("❌ Visi lauki ir jāaizpilda!")
+            return
+        
+        if not self.validateDate(date_text):
+            self.error.setText("❌ Nepareizs datuma formāts!")
+            self.datefield.setText("dd.mm.gggg")
+            return
+
+        # Get current user
+        current_user = self.widget.currentUser
+        if not current_user:
+            self.error.setText("❌ Lietotājs nav pieteicies!")
+            return
+
+        conn = sqlite3.connect("senu_kolekcionars.db")
+        cur = conn.cursor()
+
+        # Get mushroom ID
+        cur.execute("SELECT id FROM senes WHERE nosaukums = ?", (selected_name,))
+        mushroom_id = cur.fetchone()
+
+        # Get location ID
+        cur.execute("SELECT id FROM lokacija WHERE nosaukums = ?", (selected_location,))
+        location_id = cur.fetchone()
+
+        # Get user ID
+        cur.execute("SELECT id FROM lietotaji WHERE lietotajvards = ?", (current_user,))
+        user_id = cur.fetchone()
+
+        if not (mushroom_id and location_id and user_id):
+            self.error.setText("❌ Kļūda datu iegūšanā!")
+            conn.close()
+            return
+
+        mushroom_id = mushroom_id[0]
+        location_id = location_id[0]
+        user_id = user_id[0]
+
+        # Read image as binary (BLOB)
+        with open(self.file_path, "rb") as file:
+            image_blob = file.read()
+
+        # Check if the user has already collected this mushroom
+        cur.execute("SELECT skaits FROM kolekcija WHERE lietotajs_id = ? AND sene_id = ?", (user_id, mushroom_id))
+        existing_entry = cur.fetchone()
+
+        if existing_entry:
+            # Update count
+            new_count = existing_entry[0] + 1
+            cur.execute("UPDATE kolekcija SET skaits = ?, datums = ? WHERE lietotajs_id = ? AND sene_id = ?",
+                        (new_count, date_text, user_id, mushroom_id))
+        else:
+            # Insert new entry
+            cur.execute("INSERT INTO kolekcija (lietotajs_id, sene_id, lokacija_id, bilde, skaits, datums) VALUES (?, ?, ?, ?, ?, ?)",
+                        (user_id, mushroom_id, location_id, image_blob, 1, date_text))
+
+        conn.commit()
+        conn.close()
+
+        QMessageBox.information(self, "✅", "Dati veiksmīgi saglabāti kolekcijā!")
+
+        # Redirect to home
+        self.gotoHome()
+
+    def gotoUpload(self):
+        """Return to the upload page."""
         newupload = NewUploadScreen(self.widget)
         self.widget.addWidget(newupload)
         self.widget.setCurrentIndex(self.widget.indexOf(newupload))
+
+    def gotoHome(self):
+        """Return to the home screen."""
+        home = HomeScreen(self.widget, self.widget.currentUser)
+        self.widget.addWidget(home)
+        self.widget.setCurrentIndex(self.widget.indexOf(home))
+
 
 
 
