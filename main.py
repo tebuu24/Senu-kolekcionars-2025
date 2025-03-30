@@ -2,7 +2,9 @@ import sys
 import sqlite3
 import bcrypt
 import time
+import requests
 import re
+import os
 from PyQt5.uic import loadUi
 from PyQt5.QtWidgets import QApplication, QMainWindow, QStackedWidget, QFileDialog, QMessageBox, QProgressBar
 
@@ -374,17 +376,23 @@ class NewUploadScreen(QMainWindow):
         self.uploadbutton.clicked.connect(self.upload) 
 
     def upload(self):
-        file_path, _ = QFileDialog.getOpenFileName(self, "Izvēlies attēlu", "", "Images (*.png *.jpg *.jpeg)")
-        
-        if not file_path:
-            self.error.setText("❌ Lūdzu izvēlieties failu.")
-            return
-        
-        if not file_path.lower().endswith(('.png', '.jpg', '.jpeg')):
-            self.error.setText("❌ Failam jābūt .jpg, .jpeg vai .png formātā.")
-            return
+        try:
+            file_path, _ = QFileDialog.getOpenFileName(self, "Izvēlies attēlu", "", "Images (*.png *.jpg *.jpeg)")
+            
+            if not file_path:
+                self.error.setText("❌ Lūdzu izvēlieties failu.")
+                return
+            
+            if not file_path.lower().endswith(('.png', '.jpg', '.jpeg')):
+                self.error.setText("❌ Failam jābūt .jpg, .jpeg vai .png formātā.")
+                return
 
-        self.gotoNewWait(file_path)
+            self.gotoNewWait(file_path)
+
+        except Exception as e:
+            self.error.setText(f"❌ Kļūda faila apstrādē: {str(e)}")
+            print(f"Error during file upload: {e}")
+
 
     def gotoHome(self):
         home = HomeScreen(self.widget, self.widget.currentUser)
@@ -397,6 +405,16 @@ class NewUploadScreen(QMainWindow):
         self.widget.setCurrentIndex(self.widget.indexOf(wait))
 
 # Augšupielādes gaidīšanas ekrāns
+from PyQt5.QtCore import QThread, pyqtSignal
+
+class ProgressThread(QThread):
+    progress_signal = pyqtSignal(int)
+
+    def run(self):
+        for i in range(0, 101, 20):
+            QThread.sleep(1)
+            self.progress_signal.emit(i)
+
 class NewWaitScreen(QMainWindow):
     def __init__(self, widget, file_path):
         super(NewWaitScreen, self).__init__(widget)
@@ -405,36 +423,34 @@ class NewWaitScreen(QMainWindow):
         self.file_path = file_path
         self.homebutton.clicked.connect(self.gotoHome)
         self.cancelbutton.clicked.connect(self.gotoNewUpload)
-        self.updateProgressBar()
+        
+        # Start progress bar update in a separate thread
+        self.progress_thread = ProgressThread()
+        self.progress_thread.progress_signal.connect(self.updateProgressBar)
+        self.progress_thread.start()
 
-    #temporary 5sek progress bar ( nezinu cik ilgi aizņem api vēl)
-    def updateProgressBar(self):
-        for i in range(0, 101, 20):
-            time.sleep(0.5)
-            self.progressBar.setValue(i)
-
-        self.gotoResults()
+    def updateProgressBar(self, value):
+        self.progressBar.setValue(value)
 
     def gotoResults(self):
         results = NewResults(self.widget, self.file_path)
         self.widget.addWidget(results)
         self.widget.setCurrentIndex(self.widget.indexOf(results))
-
     def gotoHome(self):
         home = HomeScreen(self.widget, self.widget.currentUser)
         self.widget.addWidget(home)
         self.widget.setCurrentIndex(self.widget.indexOf(home))
-
     def gotoNewUpload(self):
         newupload = NewUploadScreen(self.widget)
         self.widget.addWidget(newupload)
         self.widget.setCurrentIndex(self.widget.indexOf(newupload))
 
+
 # Rezultātu ekrāns
 class NewResults(QMainWindow):
     def __init__(self, widget, file_path):
         super(NewResults, self).__init__(widget)
-        loadUi("ui/newresults.ui", self)
+        loadUi("ui/newresult.ui", self)
 
         self.file_path = file_path
         self.progressBar.setValue(100)
@@ -449,31 +465,44 @@ class NewResults(QMainWindow):
         self.widget.setCurrentIndex(self.widget.indexOf(home))
 
     
-    def addToCollection(self):
+def addToCollection(self):
+    try:
         conn = sqlite3.connect("lietotaji.db")
         cur = conn.cursor()
 
-        cur.execute("INSERT INTO kolekcija (username, image_path) VALUES (?, ?)", (self.currentUser, self.file_path))
+        cur.execute("INSERT INTO kolekcija (username, image_path) VALUES (?, ?)", (self.widget.currentUser, self.file_path))
         conn.commit()
         conn.close()
 
         QMessageBox.information(self, "Veiksmīgi", "✅ Attēls pievienots kolekcijai!")
+
+    except sqlite3.Error as e:
+        QMessageBox.critical(self, "Datubāzes kļūda", f"❌ Kļūda pievienojot attēlu kolekcijai: {e}")
+        print(f"Database error: {e}")
+    finally:
         self.gotoHome()
+
 
     def deleteEntry(self):
         QMessageBox.warning(self, "Atcelts", "❌ Attēls netika saglabāts.")
         self.gotoNewUpload()
+    def gotoNewUpload(self):
+        newupload = NewUploadScreen(self.widget)
+        self.widget.addWidget(newupload)
+        self.widget.setCurrentIndex(self.widget.indexOf(newupload))
+    def gotoHome(self):
+        home = HomeScreen(self.widget, self.widget.currentUser)
+        self.widget.addWidget(home)
+        self.widget.setCurrentIndex(self.widget.indexOf(home))
+
 
 
 # Programmas sākšana
 app = QApplication(sys.argv)
 widget = QStackedWidget()
-
 widget.currentUser = None
-
 widget.welcomeScreen = WelcomeScreen(widget)
 widget.addWidget(widget.welcomeScreen)
-
 widget.setFixedHeight(850)
 widget.setFixedWidth(521)
 widget.show()
