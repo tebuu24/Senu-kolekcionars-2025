@@ -6,10 +6,10 @@ import requests
 import re
 import os
 from PyQt5.uic import loadUi
-from PyQt5.QtWidgets import QApplication, QMainWindow, QStackedWidget, QFileDialog, QMessageBox, QLabel, QLineEdit, QMessageBox, QDialog
+from PyQt5.QtWidgets import QApplication, QMainWindow, QStackedWidget, QFileDialog, QMessageBox, QLabel, QLineEdit, QMessageBox, QDialog, QTableWidgetItem
 from PyQt5.QtGui import QPixmap, QImage
 from PyQt5.QtCore import Qt
-
+from datetime import datetime
 
 # Galvenais ekrāns
 class WelcomeScreen(QMainWindow):
@@ -415,6 +415,12 @@ class UsersScreen(QMainWindow):
         self.backbutton.clicked.connect(self.gotoAdmin)
         self.loadUsers()
 
+        # Pievienot dzēšanas pogai funkcionalitāti
+        self.deletebutton.clicked.connect(self.deleteUser)
+
+        # Pievienot ziņas nosūtīšanas pogas funkcionalitāti
+        self.newsbutton.clicked.connect(self.send_news)
+
     def gotoAdmin(self):
         admin = AdminScreen(self.widget)
         self.widget.addWidget(admin)
@@ -427,9 +433,57 @@ class UsersScreen(QMainWindow):
         users = cur.fetchall()
         conn.close()
 
-        self.userstable.setRowCount(len(users))
-        self.userstable.setColumnCount(2)
-        self.userstable.setHorizontalHeaderLabels(["ID", "Lietotājvārds"])
+        if users:
+            self.userstable.setRowCount(len(users))
+            self.userstable.setColumnCount(2)
+            self.userstable.setHorizontalHeaderLabels(["ID", "Lietotājvārds"])
+
+            for row_index, user in enumerate(users):
+                self.userstable.setItem(row_index, 0, QTableWidgetItem(str(user[0])))
+                self.userstable.setItem(row_index, 1, QTableWidgetItem(user[1]))
+        else:
+            self.userstable.setRowCount(1)
+            self.userstable.setColumnCount(1)
+            self.userstable.setHorizontalHeaderLabels(["Nav lietotāju"])
+            self.userstable.setItem(0, 0, QTableWidgetItem("Nav lietotāju datu."))
+
+    def deleteUser(self):
+        """Dzēš izvēlēto lietotāju no datubāzes"""
+        selected_row = self.userstable.currentRow()
+        if selected_row != -1: 
+            user_id = self.userstable.item(selected_row, 0).text()
+            conn = sqlite3.connect("senu_kolekcionars.db")
+            cur = conn.cursor()
+
+            # Dzēš lietotāju no datubāzes
+            cur.execute("DELETE FROM lietotaji WHERE id = ?", (user_id,))
+            conn.commit()
+            conn.close()
+
+            self.loadUsers()
+
+    def send_news(self):
+        """Nosūta ziņu par izvēlēto lietotāju un saglabā datubāzē"""
+        selected_row = self.userstable.currentRow()
+        if selected_row != -1:
+            user_name = self.userstable.item(selected_row, 1).text()
+
+            current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            kolekcijas_id = None
+
+            message = f"Visaktīvākais sēņotājs ir {user_name}"
+
+            conn = sqlite3.connect("senu_kolekcionars.db")
+            cur = conn.cursor()
+
+            # Ievietojam ziņu tabulā, ja kolekcijas_id ir norādīts
+            cur.execute("INSERT INTO pazinojumi (saturs, kolekcijas_id, laiks) VALUES (?, ?, ?)", 
+                        (f"Visaktīvākais sēņotājs ir {user_name}", kolekcijas_id, current_time))
+            conn.commit()
+            conn.close()
+
+            QMessageBox.information(self, "Ziņa", message)
+
 
 # Lietotāja kolekcijas ekrāns
 class CollectionScreen(QMainWindow):
@@ -448,12 +502,13 @@ class CollectionScreen(QMainWindow):
 # Jaunas sēnes ekrāns
 class NewUploadScreen(QMainWindow):
     def __init__(self, widget):
-        super(NewUploadScreen, self).__init__()
+        super(NewUploadScreen, self).__init__(widget)
         loadUi("ui/newupload.ui", self)
         self.widget = widget
         self.homebutton.clicked.connect(self.gotoHome)
         self.uploadbutton.clicked.connect(self.upload)
         self.error.setText("")
+        self.showNormal()
 
     def upload(self):
         file_path, _ = QFileDialog.getOpenFileName(self, "Izvēlies attēlu", "", "Images (*.png *.jpg *.jpeg)")
@@ -466,7 +521,7 @@ class NewUploadScreen(QMainWindow):
             self.error.setText("❌ Failam jābūt .jpg, .jpeg vai .png formātā.")
             return
 
-        add_screen = NewAddScreen(self.widget, file_path)
+        add_screen = AddScreen(self.widget, file_path)
         self.widget.addWidget(add_screen)
         self.widget.setCurrentIndex(self.widget.indexOf(add_screen))
 
@@ -476,19 +531,18 @@ class NewUploadScreen(QMainWindow):
         self.widget.addWidget(home)
         self.widget.setCurrentIndex(self.widget.indexOf(home))
 
-    def gotoAdd(self, file_path):
-        add_screen = NewAddScreen(self.widget, file_path)
-        self.widget.addWidget(add_screen)
-        self.widget.setCurrentIndex(self.widget.indexOf(add_screen))
+    def gotoAdd(self):
+        add = AddScreen(self.widget, self.widget.currentUser)
+        self.widget.addWidget(add)
+        self.widget.setCurrentIndex(self.widget.indexOf(add))
 
 
 
-
-class NewAddScreen(QMainWindow):
+class AddScreen(QMainWindow):
     def __init__(self, widget, file_path):
-        super(NewAddScreen, self).__init__()
+        super(AddScreen, self).__init__(widget)
         loadUi("ui/newadd.ui", self)
-        self.widget = widget
+
         self.file_path = file_path
 
         pixmap = QPixmap(file_path)
