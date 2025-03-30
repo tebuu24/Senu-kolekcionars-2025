@@ -1,4 +1,5 @@
 import sqlite3
+import bcrypt
 
 def initialize_database():
     conn = sqlite3.connect("senu_kolekcionars.db")
@@ -8,7 +9,7 @@ def initialize_database():
         CREATE TABLE IF NOT EXISTS lietotaji (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             lietotajvards TEXT UNIQUE NOT NULL,
-            parole TEXT NOT NULL
+            parole TEXT NOT NULL,
         )
     """)
 
@@ -55,3 +56,4 @@ def initialize_database():
     conn.close()
 
 initialize_database()
+
