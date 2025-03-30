@@ -59,11 +59,12 @@ class LoginScreen(QMainWindow):
         if result:
             stored_password = result[0]
             if bcrypt.checkpw(password.encode(), stored_password.encode()):
-                if user == "administrators" and password == "8aravika":
+                self.widget.currentUser = user
+                print("✅ Veiksmīga pieslēgšanās!")
+
+                if user == "administrators":
                     self.gotoAdmin()
                 else:
-                    self.widget.currentUser = user
-                    print("✅ Veiksmīga pieslēgšanās!")
                     self.gotoHome()
             else:
                 self.error.setText("❌ Nepareiza parole vai lietotājvārds.")
@@ -71,7 +72,6 @@ class LoginScreen(QMainWindow):
             self.error.setText("❌ Lietotājvārds neeksistē.")
 
         conn.close()
-
         self.usernamefield.clear()
         self.passwordfield.clear()
 
