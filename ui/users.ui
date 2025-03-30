@@ -38,6 +38,12 @@
       <height>71</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
     <property name="styleSheet">
      <string notr="true">border-radius: 30px;
 background-color: rgb(66, 88, 56);
@@ -754,9 +760,9 @@ background-color: rgb(66, 88, 56);</string>
        <colorrole role="Button">
         <brush brushstyle="SolidPattern">
          <color alpha="255">
-          <red>56</red>
-          <green>67</green>
-          <blue>56</blue>
+          <red>9</red>
+          <green>46</green>
+          <blue>33</blue>
          </color>
         </brush>
        </colorrole>
@@ -837,9 +843,9 @@ background-color: rgb(66, 88, 56);</string>
        <colorrole role="Button">
         <brush brushstyle="SolidPattern">
          <color alpha="255">
-          <red>56</red>
-          <green>67</green>
-          <blue>56</blue>
+          <red>9</red>
+          <green>46</green>
+          <blue>33</blue>
          </color>
         </brush>
        </colorrole>
@@ -920,9 +926,9 @@ background-color: rgb(66, 88, 56);</string>
        <colorrole role="Button">
         <brush brushstyle="SolidPattern">
          <color alpha="255">
-          <red>56</red>
-          <green>67</green>
-          <blue>56</blue>
+          <red>9</red>
+          <green>46</green>
+          <blue>33</blue>
          </color>
         </brush>
        </colorrole>
