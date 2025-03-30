@@ -431,13 +431,19 @@
       <height>71</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
     <property name="styleSheet">
      <string notr="true">border-radius: 30px;
 background-color: rgb(147, 0, 0);
 color: rgb(199, 218, 186);</string>
     </property>
     <property name="text">
-     <string>logout</string>
+     <string>iziet</string>
     </property>
    </widget>
    <widget class="QPushButton" name="usersbutton">
