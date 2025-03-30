@@ -6,7 +6,7 @@ import requests
 import re
 import os
 from PyQt5.uic import loadUi
-from PyQt5.QtWidgets import QApplication, QMainWindow, QStackedWidget, QFileDialog, QMessageBox, QProgressBar
+from PyQt5.QtWidgets import QApplication, QMainWindow, QStackedWidget, QFileDialog, QMessageBox, QProgressBar, QLabel
 
 # Galvenais ekrāns
 class WelcomeScreen(QMainWindow):
@@ -144,16 +144,46 @@ class RegisterScreen(QMainWindow):
         self.widget.setCurrentIndex(self.widget.indexOf(self.widget.loginScreen))
 
 # Sākumlapa pēc pieslēgšanās
+
 class HomeScreen(QMainWindow):
     def __init__(self, widget, currentUser):
         super(HomeScreen, self).__init__()
         loadUi("ui/home.ui", self)
         self.widget = widget
+        self.usernamelabel.setText(currentUser)
+        
+        # Make sure you are referencing the correct label from the UI
+        self.laikapstakli.setText("Fetching weather...")  # Optional, to show a placeholder text initially
+        
         self.logoutbutton.clicked.connect(self.gotoWelcome)
         self.accountbutton.clicked.connect(self.gotoAccount)
-        self.usernamelabel.setText(currentUser)
         self.newbutton.clicked.connect(self.gotoNewUpload)
         self.collectionbutton.clicked.connect(self.gotoCollection)
+
+        # Get and display weather info
+        self.get_weather()
+
+    def get_weather(self):
+        try:
+            api_key = "d912d90fac064f76bfb140614253003"  # Replace with your actual API key
+            city = "Riga"  # You can change this to any city
+            url = f"http://api.weatherapi.com/v1/current.json?key={api_key}&q={city}"
+
+            response = requests.get(url)
+            data = response.json()
+
+            if response.status_code == 200:
+                current_weather = data['current']
+                temperature = current_weather['temp_c']  # Temperature in Celsius
+                condition = current_weather['condition']['text']  # Weather condition (e.g., Sunny)
+                humidity = current_weather['humidity']  # Humidity percentage
+
+                # Update the laikapstakli label with weather information
+                self.laikapstakli.setText(f"Weather: {condition}, {temperature}°C, Humidity: {humidity}%")
+            else:
+                self.laikapstakli.setText("❌ Weather data not available.")
+        except Exception as e:
+            self.laikapstakli.setText(f"❌ Error fetching weather: {e}")
 
     def gotoWelcome(self):
         self.widget.currentUser = None
@@ -175,6 +205,7 @@ class HomeScreen(QMainWindow):
         collection = CollectionScreen(self.widget)
         self.widget.addWidget(collection)
         self.widget.setCurrentIndex(self.widget.indexOf(collection))
+
 
 # Konta ekrāns
 class AccountScreen(QMainWindow):
