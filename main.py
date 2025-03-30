@@ -448,7 +448,6 @@ class UsersScreen(QMainWindow):
             self.userstable.setItem(0, 0, QTableWidgetItem("Nav lietotāju datu."))
 
     def deleteUser(self):
-        """Dzēš izvēlēto lietotāju no datubāzes"""
         selected_row = self.userstable.currentRow()
         if selected_row != -1: 
             user_id = self.userstable.item(selected_row, 0).text()
@@ -463,7 +462,6 @@ class UsersScreen(QMainWindow):
             self.loadUsers()
 
     def send_news(self):
-        """Nosūta ziņu par izvēlēto lietotāju un saglabā datubāzē"""
         selected_row = self.userstable.currentRow()
         if selected_row != -1:
             user_name = self.userstable.item(selected_row, 1).text()
