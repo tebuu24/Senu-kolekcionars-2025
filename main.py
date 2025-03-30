@@ -453,7 +453,7 @@ class NewUploadScreen(QMainWindow):
         self.widget = widget
         self.homebutton.clicked.connect(self.gotoHome)
         self.uploadbutton.clicked.connect(self.upload)
-        self.error.setText("")  # Clear error label
+        self.error.setText("")
 
     def upload(self):
         file_path, _ = QFileDialog.getOpenFileName(self, "Izvēlies attēlu", "", "Images (*.png *.jpg *.jpeg)")
@@ -466,7 +466,6 @@ class NewUploadScreen(QMainWindow):
             self.error.setText("❌ Failam jābūt .jpg, .jpeg vai .png formātā.")
             return
 
-        # Send the image path to NewAddScreen
         add_screen = NewAddScreen(self.widget, file_path)
         self.widget.addWidget(add_screen)
         self.widget.setCurrentIndex(self.widget.indexOf(add_screen))
