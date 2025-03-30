@@ -6,13 +6,10 @@ import requests
 import re
 import os
 from PyQt5.uic import loadUi
-from PyQt5.QtWidgets import QApplication, QMainWindow, QStackedWidget, QFileDialog, QMessageBox, QProgressBar, QLabel, QLineEdit, QMessageBox, QDialog, QCompleter
+from PyQt5.QtWidgets import QApplication, QMainWindow, QStackedWidget, QFileDialog, QMessageBox, QLabel, QLineEdit, QMessageBox, QDialog
 from PyQt5.QtGui import QPixmap, QImage
-from PyQt5.QtGui import QStandardItemModel, QStandardItem
-from PyQt5.QtWidgets import QMainWindow
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QMainWindow, QTableWidgetItem
-from datetime import datetime
+
 
 # Galvenais ekrāns
 class WelcomeScreen(QMainWindow):
@@ -153,6 +150,7 @@ class RegisterScreen(QMainWindow):
             self.widget.addWidget(self.widget.loginScreen)
         self.widget.setCurrentIndex(self.widget.indexOf(self.widget.loginScreen))
 
+# Sākumlapa pēc pieslēgšanās
 class HomeScreen(QMainWindow):
     def __init__(self, widget, currentUser):
         super(HomeScreen, self).__init__()
@@ -160,18 +158,13 @@ class HomeScreen(QMainWindow):
         self.widget = widget
         self.usernamelabel.setText(currentUser)
         self.laikapstakli.setText("Meklē laikapstākļus...")
-
+        
         self.logoutbutton.clicked.connect(self.gotoWelcome)
         self.accountbutton.clicked.connect(self.gotoAccount)
         self.newbutton.clicked.connect(self.gotoNewUpload)
         self.collectionbutton.clicked.connect(self.gotoCollection)
 
         self.get_weather()
-
-        self.model = QStandardItemModel()
-        self.news.setModel(self.model)
-
-        self.load_home_news()
 
     def get_weather(self):
         try:
@@ -187,7 +180,7 @@ class HomeScreen(QMainWindow):
                 temperature = current_weather['temp_c']
                 humidity = current_weather['humidity']
                 icon_url = "http:" + current_weather['condition']['icon']
-
+                
                 self.laikapstakli.setText(f"{temperature}°C, mitrums: {humidity}%")
                 image = QImage()
                 image.loadFromData(requests.get(icon_url).content)
@@ -198,20 +191,6 @@ class HomeScreen(QMainWindow):
             self.laikapstakli.setText("❌ Kļūda meklējot laikapstākļu datus.")
             print(f"Laikapstākļu api kļūda: {e}")
 
-    def load_home_news(self):
-        """Ielādē ziņas uz HomeScreen"""
-        conn = sqlite3.connect("senu_kolekcionars.db")
-        cur = conn.cursor()
-
-        cur.execute("SELECT saturs, laiks FROM pazinojumi ORDER BY laiks DESC")
-        news_entries = cur.fetchall()
-
-        conn.close()
-
-        self.model.clear()
-        for entry in news_entries:
-            news_item = QStandardItem(f"{entry[1]}: {entry[0]}")
-            self.model.appendRow(news_item)
 
     def gotoWelcome(self):
         self.widget.currentUser = None
@@ -388,6 +367,7 @@ class DataScreen(QMainWindow):
         self.newpasswordfield_2.clear()
 
 
+# Admin ekrāns
 class AdminScreen(QMainWindow):
     def __init__(self, widget):
         super(AdminScreen, self).__init__()
@@ -396,11 +376,6 @@ class AdminScreen(QMainWindow):
         self.logoutbutton.clicked.connect(self.gotoWelcome)
         self.newsbutton.clicked.connect(self.gotoNews)
         self.usersbutton.clicked.connect(self.gotoUsers)
-
-        self.model = QStandardItemModel()
-        self.news.setModel(self.model)
-
-        self.load_admin_news()
 
     def gotoWelcome(self):
         self.widget.currentUser = None
@@ -418,84 +393,20 @@ class AdminScreen(QMainWindow):
         self.widget.addWidget(users)
         self.widget.setCurrentIndex(self.widget.indexOf(users))
 
-    def load_admin_news(self):
-        """Ielādē ziņas admin ekrānā un pievieno tās uz QStandardItemModel"""
-        conn = sqlite3.connect("senu_kolekcionars.db")
-        cur = conn.cursor()
-
-
-        cur.execute("SELECT saturs, laiks FROM pazinojumi ORDER BY laiks DESC")
-        news_entries = cur.fetchall()
-
-        conn.close()
-        self.model.clear()
-
-        for entry in news_entries:
-            news_item = QStandardItem(f"{entry[1]}: {entry[0]}")
-            self.model.appendRow(news_item)
-
-
-
 # News ekrāns
 class NewsScreen(QMainWindow):
     def __init__(self, widget):
         super(NewsScreen, self).__init__()
         loadUi("ui/news.ui", self)
         self.widget = widget
-
-        self.model = QStandardItemModel()
-        self.news.setModel(self.model)
-
-        self.publishbutton.clicked.connect(self.publish_news)
         self.backbutton.clicked.connect(self.gotoAdmin)
-
-        self.load_news()
 
     def gotoAdmin(self):
         admin = AdminScreen(self.widget)
         self.widget.addWidget(admin)
         self.widget.setCurrentIndex(self.widget.indexOf(admin))
 
-    def publish_news(self):
-        news_text = self.newsfield.toPlainText().strip()
-
-        if news_text:
-            conn = sqlite3.connect("senu_kolekcionars.db")
-            cur = conn.cursor()
-            cur.execute("""
-                INSERT INTO pazinojumi (saturs, laiks)
-                VALUES (?, datetime('now'))
-            """, (news_text,))
-
-            conn.commit()
-            conn.close()
-
-            self.newsfield.clear()
-
-            QMessageBox.information(self, "Ziņa publicēta", "Ziņa veiksmīgi publicēta!")
-
-            self.load_news()
-
-    def load_news(self):
-        """Ielādē visas ziņas no datubāzes un pievieno tās modelim (QListView)"""
-        conn = sqlite3.connect("senu_kolekcionars.db")
-        cur = conn.cursor()
-
-        cur.execute("SELECT saturs, laiks FROM pazinojumi ORDER BY laiks DESC")
-        news_entries = cur.fetchall()
-
-        conn.close()
-        self.model.clear()
-
-        for entry in news_entries:
-            news_item = QStandardItem(f"{entry[1]}: {entry[0]}")  #Laiks un contents
-            self.model.appendRow(news_item)
-
-
-
 # Lietotāju pāŗvaldības ekrāns
-
-
 class UsersScreen(QMainWindow):
     def __init__(self, widget):
         super(UsersScreen, self).__init__()
@@ -516,25 +427,9 @@ class UsersScreen(QMainWindow):
         users = cur.fetchall()
         conn.close()
 
-        # Ja ir lietotāji, mēs ielādēsim tos tabulā
-        if users:
-            # Uzstādām tabulas izmērus atbilstoši saņemtajiem lietotājiem
-            self.userstable.setRowCount(len(users))  # Iestata rindu skaitu
-            self.userstable.setColumnCount(2)  # 2 kolonnas (ID, Lietotājvārds)
-            self.userstable.setHorizontalHeaderLabels(["ID", "Lietotājvārds"])
-
-            # Piepildām tabulu ar datiem
-            for row_index, user in enumerate(users):
-                # Iestatām katru rindu ar datiem
-                self.userstable.setItem(row_index, 0, QTableWidgetItem(str(user[0])))  # ID
-                self.userstable.setItem(row_index, 1, QTableWidgetItem(user[1]))  # Lietotājvārds
-        else:
-            # Ja nav lietotāju, mēs varam pievienot brīdinājuma ziņu
-            self.userstable.setRowCount(1)
-            self.userstable.setColumnCount(1)
-            self.userstable.setHorizontalHeaderLabels(["Nav lietotāju"])
-            self.userstable.setItem(0, 0, QTableWidgetItem("Nav lietotāju datu."))
-
+        self.userstable.setRowCount(len(users))
+        self.userstable.setColumnCount(2)
+        self.userstable.setHorizontalHeaderLabels(["ID", "Lietotājvārds"])
 
 # Lietotāja kolekcijas ekrāns
 class CollectionScreen(QMainWindow):
@@ -562,22 +457,20 @@ class NewUploadScreen(QMainWindow):
 
     def upload(self):
         file_path, _ = QFileDialog.getOpenFileName(self, "Izvēlies attēlu", "", "Images (*.png *.jpg *.jpeg)")
-        
+
         if not file_path:
             self.error.setText("❌ Lūdzu izvēlieties failu.")
             return
-        
+
         if not file_path.lower().endswith(('.png', '.jpg', '.jpeg')):
             self.error.setText("❌ Failam jābūt .jpg, .jpeg vai .png formātā.")
             return
-        
-        # Check file size (optional, 5MB limit)
-        if os.path.getsize(file_path) > 5 * 1024 * 1024:
-            self.error.setText("❌ Faila izmērs ir pārāk liels (maks. 5MB).")
-            return
 
-        # Proceed to the next screen
-        self.gotoAdd(file_path)
+        # Send the image path to NewAddScreen
+        add_screen = NewAddScreen(self.widget, file_path)
+        self.widget.addWidget(add_screen)
+        self.widget.setCurrentIndex(self.widget.indexOf(add_screen))
+
 
     def gotoHome(self):
         home = HomeScreen(self.widget, self.widget.currentUser)
@@ -598,122 +491,94 @@ class NewAddScreen(QMainWindow):
         loadUi("ui/newadd.ui", self)
         self.widget = widget
         self.file_path = file_path
-        self.error.setText("")  # Clear error label
 
-        self.loadComboBoxes()  # Load data into comboboxes
-
-        self.addbutton.clicked.connect(self.addToDatabase)
-        self.deletebutton.clicked.connect(self.gotoUpload)
-
-        self.datefield.setPlaceholderText("dd.mm.gggg")
-
-    def loadComboBoxes(self):
-        """Load mushroom names and locations from the database into comboboxes."""
-        conn = sqlite3.connect("senu_kolekcionars.db")
-        cur = conn.cursor()
-
-        # Fill name combo box
-        cur.execute("SELECT nosaukums FROM senes")
-        names = cur.fetchall()
-        self.namecombo.addItems([name[0] for name in names])
-
-        # Fill location combo box
-        cur.execute("SELECT nosaukums FROM lokacija")
-        locations = cur.fetchall()
-        self.locationcombo.addItems([loc[0] for loc in locations])
-
-        conn.close()
-
-    def validateDate(self, date_text):
-        """Check if the date format is valid (dd.mm.yyyy)."""
-        import datetime
-        try:
-            datetime.datetime.strptime(date_text, "%d.%m.%Y")
-            return True
-        except ValueError:
-            return False
-
-    def addToDatabase(self):
-        selected_name = self.namecombo.currentText()
-        selected_location = self.locationcombo.currentText()
-        date_text = self.datefield.text().strip()
-
-        if not selected_name or not selected_location or not date_text:
-            self.error.setText("❌ Visi lauki ir jāaizpilda!")
-            return
-        
-        if not self.validateDate(date_text):
-            self.error.setText("❌ Nepareizs datuma formāts!")
-            self.datefield.setText("dd.mm.gggg")
-            return
-
-        # Get current user
-        current_user = self.widget.currentUser
-        if not current_user:
-            self.error.setText("❌ Lietotājs nav pieteicies!")
-            return
-
-        conn = sqlite3.connect("senu_kolekcionars.db")
-        cur = conn.cursor()
-
-        # Get mushroom ID
-        cur.execute("SELECT id FROM senes WHERE nosaukums = ?", (selected_name,))
-        mushroom_id = cur.fetchone()
-
-        # Get location ID
-        cur.execute("SELECT id FROM lokacija WHERE nosaukums = ?", (selected_location,))
-        location_id = cur.fetchone()
-
-        # Get user ID
-        cur.execute("SELECT id FROM lietotaji WHERE lietotajvards = ?", (current_user,))
-        user_id = cur.fetchone()
-
-        if not (mushroom_id and location_id and user_id):
-            self.error.setText("❌ Kļūda datu iegūšanā!")
-            conn.close()
-            return
-
-        mushroom_id = mushroom_id[0]
-        location_id = location_id[0]
-        user_id = user_id[0]
-
-        # Read image as binary (BLOB)
-        with open(self.file_path, "rb") as file:
-            image_blob = file.read()
-
-        # Check if the user has already collected this mushroom
-        cur.execute("SELECT skaits FROM kolekcija WHERE lietotajs_id = ? AND sene_id = ?", (user_id, mushroom_id))
-        existing_entry = cur.fetchone()
-
-        if existing_entry:
-            # Update count
-            new_count = existing_entry[0] + 1
-            cur.execute("UPDATE kolekcija SET skaits = ?, datums = ? WHERE lietotajs_id = ? AND sene_id = ?",
-                        (new_count, date_text, user_id, mushroom_id))
+        pixmap = QPixmap(file_path)
+        if pixmap.isNull():
+            self.error.setText("❌ Nevarēja ielādēt attēlu.")
         else:
-            # Insert new entry
-            cur.execute("INSERT INTO kolekcija (lietotajs_id, sene_id, lokacija_id, bilde, skaits, datums) VALUES (?, ?, ?, ?, ?, ?)",
-                        (user_id, mushroom_id, location_id, image_blob, 1, date_text))
+            self.imagelabel.setPixmap(pixmap.scaled(self.imagelabel.size(), Qt.KeepAspectRatio))
 
-        conn.commit()
-        conn.close()
+        self.loadComboBoxes()
+        self.homebutton.clicked.connect(self.gotoHome)
+        self.addbutton.clicked.connect(self.addToDatabase)
+        self.deletebutton.clicked.connect(self.gotoNewUpload)
 
-        QMessageBox.information(self, "✅", "Dati veiksmīgi saglabāti kolekcijā!")
-
-        # Redirect to home
-        self.gotoHome()
-
-    def gotoUpload(self):
-        """Return to the upload page."""
+    def gotoHome(self):
+        home = HomeScreen(self.widget, self.widget.currentUser)
+        self.widget.addWidget(home)
+        self.widget.setCurrentIndex(self.widget.indexOf(home))
+    
+    def gotoNewUpload(self):
         newupload = NewUploadScreen(self.widget)
         self.widget.addWidget(newupload)
         self.widget.setCurrentIndex(self.widget.indexOf(newupload))
 
-    def gotoHome(self):
-        """Return to the home screen."""
-        home = HomeScreen(self.widget, self.widget.currentUser)
-        self.widget.addWidget(home)
-        self.widget.setCurrentIndex(self.widget.indexOf(home))
+    def loadComboBoxes(self):
+        conn = sqlite3.connect("senu_kolekcionars.db")
+        cur = conn.cursor()
+
+        cur.execute("SELECT nosaukums FROM senes")
+        self.namecombo.addItems([row[0] for row in cur.fetchall()])
+
+        cur.execute("SELECT nosaukums FROM lokacija")
+        self.locationcombo.addItems([row[0] for row in cur.fetchall()])
+
+        conn.close()
+
+    def addToDatabase(self):
+        selected_name = self.namecombo.currentText()
+        selected_location = self.locationcombo.currentText()
+        entered_date = self.datefield.text().strip()
+
+        # (dd.mm.yyyy -> yyyy-mm-dd)
+        import datetime
+        try:
+            date_obj = datetime.datetime.strptime(entered_date, "%d.%m.%Y")
+            formatted_date = date_obj.strftime("%Y-%m-%d")
+        except ValueError:
+            self.error.setText("❌ Nepareizs datuma formāts. Izmantojiet: dd.mm.gggg")
+            self.datefield.setText("dd.mm.gggg")
+            return
+
+        # bilde uz blob
+        with open(self.file_path, 'rb') as file:
+            image_blob = file.read()
+
+        conn = sqlite3.connect("senu_kolekcionars.db")
+        cur = conn.cursor()
+
+        cur.execute("SELECT id FROM lokacija WHERE nosaukums = ?", (selected_location,))
+        location_id = cur.fetchone()
+        if not location_id:
+            self.error.setText("❌ Kļūda: Nepareiza lokācija.")
+            return
+        location_id = location_id[0]
+
+        cur.execute("SELECT id FROM senes WHERE nosaukums = ?", (selected_name,))
+        mushroom_id = cur.fetchone()
+        if not mushroom_id:
+            self.error.setText("❌ Kļūda: Nepareizs nosaukums.")
+            return
+        mushroom_id = mushroom_id[0]
+
+        # Vai lietotājs jau ir pievienojis iepriekš
+        cur.execute("SELECT skaits FROM kolekcijas WHERE lietotajs_id = ? AND senes_id = ?", 
+                    (self.widget.currentUser, mushroom_id))
+        existing_record = cur.fetchone()
+
+        if existing_record:
+            new_count = existing_record[0] + 1
+            cur.execute("UPDATE kolekcijas SET skaits = ?, lokacija_id = ? AND datums = ? WHERE lietotajs_id = ? AND senes_id = ?",
+                        (new_count, location_id, formatted_date, self.widget.currentUser, mushroom_id))
+        else:
+            cur.execute("INSERT INTO kolekcijas (lietotajs_id, senes_id, lokacija_id, attels, skaits, datums) VALUES (?, ?, ?, ?, ?, ?)",
+                        (self.widget.currentUser, mushroom_id, location_id, image_blob, 1, formatted_date))
+
+        conn.commit()
+        conn.close()
+
+        self.error.setText("✅ Pievienots kolekcijai!")
+
 
 
 

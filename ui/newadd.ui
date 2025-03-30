@@ -38,6 +38,18 @@
       <height>71</height>
      </rect>
     </property>
+    <property name="minimumSize">
+     <size>
+      <width>71</width>
+      <height>71</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>71</width>
+      <height>71</height>
+     </size>
+    </property>
     <property name="font">
      <font>
       <weight>75</weight>
@@ -56,7 +68,7 @@ color: rgb(199, 218, 186);</string>
    <widget class="QLabel" name="newtitle">
     <property name="geometry">
      <rect>
-      <x>170</x>
+      <x>180</x>
       <y>40</y>
       <width>181</width>
       <height>41</height>
@@ -254,14 +266,14 @@ color: rgb(199, 218, 186);</string>
     </property>
     <property name="minimumSize">
      <size>
-      <width>1</width>
-      <height>1</height>
+      <width>201</width>
+      <height>31</height>
      </size>
     </property>
     <property name="maximumSize">
      <size>
-      <width>301</width>
-      <height>41</height>
+      <width>201</width>
+      <height>31</height>
      </size>
     </property>
     <property name="palette">
@@ -526,14 +538,14 @@ color: rgb(199, 218, 186);</string>
     </property>
     <property name="minimumSize">
      <size>
-      <width>1</width>
-      <height>1</height>
+      <width>201</width>
+      <height>31</height>
      </size>
     </property>
     <property name="maximumSize">
      <size>
-      <width>301</width>
-      <height>41</height>
+      <width>201</width>
+      <height>31</height>
      </size>
     </property>
     <property name="palette">
@@ -709,7 +721,7 @@ text-align: center;</string>
      <number>0</number>
     </property>
    </widget>
-   <widget class="QLabel" name="weathericon">
+   <widget class="QLabel" name="imagelabel">
     <property name="geometry">
      <rect>
       <x>120</x>
@@ -910,6 +922,18 @@ text-align: center;</string>
       <width>221</width>
       <height>41</height>
      </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>221</width>
+      <height>41</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>221</width>
+      <height>41</height>
+     </size>
     </property>
     <property name="palette">
      <palette>
@@ -1184,6 +1208,18 @@ background-color: rgb(66, 88, 56);</string>
       <height>41</height>
      </rect>
     </property>
+    <property name="minimumSize">
+     <size>
+      <width>221</width>
+      <height>41</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>221</width>
+      <height>41</height>
+     </size>
+    </property>
     <property name="palette">
      <palette>
       <active>
@@ -1457,6 +1493,18 @@ background-color: rgb(66, 88, 56);</string>
       <height>41</height>
      </rect>
     </property>
+    <property name="minimumSize">
+     <size>
+      <width>201</width>
+      <height>41</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>201</width>
+      <height>41</height>
+     </size>
+    </property>
     <property name="palette">
      <palette>
       <active>
@@ -1640,7 +1688,7 @@ background-color: rgb(66, 88, 56);</string>
 background-color: rgb(56, 67, 56);</string>
     </property>
     <property name="text">
-     <string>dd/mm/gggg</string>
+     <string>dd.mm.gggg</string>
     </property>
    </widget>
    <widget class="QLabel" name="questionlabel_3">
@@ -1654,14 +1702,14 @@ background-color: rgb(56, 67, 56);</string>
     </property>
     <property name="minimumSize">
      <size>
-      <width>1</width>
-      <height>1</height>
+      <width>201</width>
+      <height>31</height>
      </size>
     </property>
     <property name="maximumSize">
      <size>
-      <width>301</width>
-      <height>41</height>
+      <width>201</width>
+      <height>31</height>
      </size>
     </property>
     <property name="palette">
@@ -1840,22 +1888,22 @@ text-align: center;</string>
    <widget class="QLabel" name="error">
     <property name="geometry">
      <rect>
-      <x>50</x>
+      <x>30</x>
       <y>670</y>
-      <width>421</width>
+      <width>461</width>
       <height>31</height>
      </rect>
     </property>
     <property name="minimumSize">
      <size>
-      <width>1</width>
-      <height>1</height>
+      <width>461</width>
+      <height>31</height>
      </size>
     </property>
     <property name="maximumSize">
      <size>
-      <width>3000</width>
-      <height>666</height>
+      <width>461</width>
+      <height>31</height>
      </size>
     </property>
     <property name="palette">
