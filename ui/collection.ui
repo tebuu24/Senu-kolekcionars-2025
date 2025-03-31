@@ -1040,7 +1040,7 @@ background-color: rgb(66, 88, 56);</string>
     <property name="font">
      <font>
       <family>OCR A Extended</family>
-      <pointsize>8</pointsize>
+      <pointsize>10</pointsize>
      </font>
     </property>
    </widget>
