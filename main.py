@@ -655,6 +655,7 @@ class AddScreen(QMainWindow):
     def __init__(self, widget, file_path):
         super(AddScreen, self).__init__(widget)
         loadUi("ui/newadd.ui", self)
+        self.widget = widget
 
         self.file_path = file_path
 

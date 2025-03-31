@@ -745,6 +745,18 @@ background-color: rgb(66, 88, 56);</string>
       <height>661</height>
      </rect>
     </property>
+    <property name="minimumSize">
+     <size>
+      <width>461</width>
+      <height>661</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>461</width>
+      <height>661</height>
+     </size>
+    </property>
     <property name="palette">
      <palette>
       <active>
@@ -760,18 +772,18 @@ background-color: rgb(66, 88, 56);</string>
        <colorrole role="Button">
         <brush brushstyle="SolidPattern">
          <color alpha="255">
-          <red>9</red>
-          <green>46</green>
-          <blue>33</blue>
+          <red>135</red>
+          <green>188</green>
+          <blue>116</blue>
          </color>
         </brush>
        </colorrole>
        <colorrole role="Text">
         <brush brushstyle="SolidPattern">
          <color alpha="255">
-          <red>56</red>
-          <green>67</green>
-          <blue>56</blue>
+          <red>199</red>
+          <green>218</green>
+          <blue>186</blue>
          </color>
         </brush>
        </colorrole>
@@ -805,9 +817,9 @@ background-color: rgb(66, 88, 56);</string>
        <colorrole role="HighlightedText">
         <brush brushstyle="SolidPattern">
          <color alpha="255">
-          <red>56</red>
-          <green>67</green>
-          <blue>56</blue>
+          <red>199</red>
+          <green>218</green>
+          <blue>186</blue>
          </color>
         </brush>
        </colorrole>
@@ -843,18 +855,18 @@ background-color: rgb(66, 88, 56);</string>
        <colorrole role="Button">
         <brush brushstyle="SolidPattern">
          <color alpha="255">
-          <red>9</red>
-          <green>46</green>
-          <blue>33</blue>
+          <red>135</red>
+          <green>188</green>
+          <blue>116</blue>
          </color>
         </brush>
        </colorrole>
        <colorrole role="Text">
         <brush brushstyle="SolidPattern">
          <color alpha="255">
-          <red>56</red>
-          <green>67</green>
-          <blue>56</blue>
+          <red>199</red>
+          <green>218</green>
+          <blue>186</blue>
          </color>
         </brush>
        </colorrole>
@@ -888,9 +900,9 @@ background-color: rgb(66, 88, 56);</string>
        <colorrole role="HighlightedText">
         <brush brushstyle="SolidPattern">
          <color alpha="255">
-          <red>56</red>
-          <green>67</green>
-          <blue>56</blue>
+          <red>199</red>
+          <green>218</green>
+          <blue>186</blue>
          </color>
         </brush>
        </colorrole>
@@ -926,9 +938,9 @@ background-color: rgb(66, 88, 56);</string>
        <colorrole role="Button">
         <brush brushstyle="SolidPattern">
          <color alpha="255">
-          <red>9</red>
-          <green>46</green>
-          <blue>33</blue>
+          <red>135</red>
+          <green>188</green>
+          <blue>116</blue>
          </color>
         </brush>
        </colorrole>
@@ -971,9 +983,9 @@ background-color: rgb(66, 88, 56);</string>
        <colorrole role="HighlightedText">
         <brush brushstyle="SolidPattern">
          <color alpha="255">
-          <red>56</red>
-          <green>67</green>
-          <blue>56</blue>
+          <red>199</red>
+          <green>218</green>
+          <blue>186</blue>
          </color>
         </brush>
        </colorrole>
