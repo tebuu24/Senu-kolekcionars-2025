@@ -526,6 +526,15 @@ color: rgb(199, 218, 186);</string>
          </color>
         </brush>
        </colorrole>
+       <colorrole role="ToolTipText">
+        <brush brushstyle="SolidPattern">
+         <color alpha="255">
+          <red>199</red>
+          <green>218</green>
+          <blue>186</blue>
+         </color>
+        </brush>
+       </colorrole>
       </active>
       <inactive>
        <colorrole role="WindowText">
@@ -609,6 +618,15 @@ color: rgb(199, 218, 186);</string>
          </color>
         </brush>
        </colorrole>
+       <colorrole role="ToolTipText">
+        <brush brushstyle="SolidPattern">
+         <color alpha="255">
+          <red>199</red>
+          <green>218</green>
+          <blue>186</blue>
+         </color>
+        </brush>
+       </colorrole>
       </inactive>
       <disabled>
        <colorrole role="WindowText">
@@ -689,6 +707,15 @@ color: rgb(199, 218, 186);</string>
           <red>145</red>
           <green>218</green>
           <blue>0</blue>
+         </color>
+        </brush>
+       </colorrole>
+       <colorrole role="ToolTipText">
+        <brush brushstyle="SolidPattern">
+         <color alpha="255">
+          <red>199</red>
+          <green>218</green>
+          <blue>186</blue>
          </color>
         </brush>
        </colorrole>
@@ -1013,7 +1040,7 @@ background-color: rgb(66, 88, 56);</string>
     <property name="font">
      <font>
       <family>OCR A Extended</family>
-      <pointsize>12</pointsize>
+      <pointsize>8</pointsize>
      </font>
     </property>
    </widget>

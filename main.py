@@ -6,8 +6,8 @@ import requests
 import re
 import os
 from PyQt5.uic import loadUi
-from PyQt5.QtWidgets import QApplication, QMainWindow, QStackedWidget, QFileDialog, QMessageBox, QLabel, QLineEdit, QMessageBox, QDialog, QTableWidgetItem
-from PyQt5.QtGui import QPixmap, QImage, QStandardItemModel, QStandardItem
+from PyQt5.QtWidgets import QApplication, QMainWindow, QStackedWidget, QFileDialog, QMessageBox, QLabel, QLineEdit, QMessageBox, QDialog, QTableWidgetItem, QPushButton
+from PyQt5.QtGui import QPixmap, QImage, QStandardItemModel, QStandardItem, QIcon
 from PyQt5.QtCore import Qt
 from datetime import datetime
 
@@ -226,7 +226,7 @@ class HomeScreen(QMainWindow):
         self.widget.setCurrentIndex(self.widget.indexOf(newupload))
 
     def gotoCollection(self):
-        collection = CollectionScreen(self.widget)
+        collection = CollectionScreen(self.widget, self.widget.currentUser)
         self.widget.addWidget(collection)
         self.widget.setCurrentIndex(self.widget.indexOf(collection))
 
@@ -472,7 +472,6 @@ class NewsScreen(QMainWindow):
             self.load_news()
 
     def load_news(self):
-        """Ielādē visas ziņas no datubāzes un pievieno tās modelim (QListView)"""
         conn = sqlite3.connect("senu_kolekcionars.db")
         cur = conn.cursor()
 
@@ -513,7 +512,7 @@ class UsersScreen(QMainWindow):
         cur = conn.cursor()
         query = f"SELECT id, lietotajvards FROM lietotaji ORDER BY {order_by}"
         
-        print(f"Executing query: {query}")  # Debug
+        print(f"Executing query: {query}")
         
         try:
             cur.execute(query)
@@ -539,15 +538,14 @@ class UsersScreen(QMainWindow):
 
 
     def sortUsers(self):
-        """Sort users based on selected filter option."""
         selected_option = self.filter.currentText()  
         
-        print(f"Selected option: {selected_option}")  # Debug
+        print(f"Selected option: {selected_option}")
 
-        if selected_option == "Datuma (↓)":
+        if selected_option == "ID (↓)":
             self.loadUsers("id ASC")  
             print("Sorting by ID ASC")  
-        elif selected_option == "Datuma (↑)":
+        elif selected_option == "ID (↑)":
             self.loadUsers("id DESC")  
             print("Sorting by ID DESC")  
         elif selected_option == "Nosaukuma (↓)":
@@ -600,14 +598,153 @@ class UsersScreen(QMainWindow):
 
 # Lietotāja kolekcijas ekrāns
 class CollectionScreen(QMainWindow):
-    def __init__(self, widget):
-        super(CollectionScreen, self).__init__()
+    def __init__(self, widget, currentUser):
+        super(CollectionScreen, self).__init__(widget)
         loadUi("ui/collection.ui", self)
+
+        # UI loga ģeometrijas piespiedu labojums
+        self.setFixedSize(521, 850)
+        self.setGeometry(0, 0, 521, 850)
+        self.setParent(widget)
+        self.setWindowFlags(Qt.Widget)
+        self.hide()
+        self.showNormal()
+
         self.widget = widget
+        self.currentUser = currentUser
+        self.loadCollectionData()
+
         self.homebutton.clicked.connect(self.gotoHome)
+        self.filter.currentIndexChanged.connect(self.sortCollection)
+        self.deletebutton.clicked.connect(self.deleteSelectedRow)
+
+    def loadCollectionData(self, order_by="k.datums DESC"):
+        conn = sqlite3.connect("senu_kolekcionars.db")
+        cur = conn.cursor()
+        selected_option = self.filter.currentText()  
+        print(f"Selected option: {selected_option}")
+        
+
+
+        query = f"""
+        SELECT k.id, s.nosaukums, l.nosaukums, k.skaits, k.datums, k.attels
+        FROM kolekcijas k
+        JOIN senes s ON k.senes_id = s.id
+        JOIN lokacija l ON k.lokacija_id = l.id
+        WHERE k.lietotajs_id = ?
+        ORDER BY {order_by}
+        """
+        cur.execute(query, (self.currentUser,))
+        records = cur.fetchall()
+        conn.close()
+
+        self.collectiontable.setRowCount(len(records))
+        self.collectiontable.setColumnCount(5)
+        self.collectiontable.setHorizontalHeaderLabels(["Sēne", "Lokācija", "Skaits", "Datums", "Attēls"])
+
+        for row_index, row_data in enumerate(records):
+            id_, nosaukums, location, skaits, datums, image_blob = row_data
+
+            self.collectiontable.setItem(row_index, 0, QTableWidgetItem(nosaukums))
+            self.collectiontable.setItem(row_index, 1, QTableWidgetItem(location))
+            self.collectiontable.setItem(row_index, 2, QTableWidgetItem(str(skaits)))
+            self.collectiontable.setItem(row_index, 3, QTableWidgetItem(datums))
+
+            # blob -> bilde
+            if image_blob:
+                pixmap = QPixmap()
+                pixmap.loadFromData(image_blob)
+                icon = QIcon(pixmap)
+                item = QTableWidgetItem()
+                item.setIcon(icon)
+                self.collectiontable.setItem(row_index, 4, item)
+
+    def sortCollection(self):
+        selected_option = self.filter.currentText()
+        print(f"Selected filter option: {selected_option}")
+
+        if selected_option == "Nosaukums (↓)":
+            self.loadCollectionData("s.nosaukums ASC")  
+            print("Sorting by ID ASC")  
+        elif selected_option == "Nosaukums (↑)":
+            self.loadCollectionData("s.nosaukums DESC")  
+            print("Sorting by ID DESC")  
+        elif selected_option == "Datums (↓)":
+            self.loadCollectionData("k.datums ASC")  
+            print("Sorting by date ASC")  
+        elif selected_option == "Datums (↑)":
+            self.loadCollectionData("k.datums DESC")  
+            print("Sorting by date DESC")  
+        elif selected_option == "Skaits (↓)":
+            self.loadCollectionData("k.skaits ASC")  
+            print("Sorting by count ASC")  
+        elif selected_option == "Skaits (↑)":
+            self.loadCollectionData("k.skaits DESC")  
+            print("Sorting by count DESC") 
+        else:
+            print("Unknown sorting option!")  
+
+    def deleteSelectedRow(self):
+        selected_row = self.collectiontable.currentRow()
+        if selected_row == -1:
+            return
+
+        mushroom_name = self.collectiontable.item(selected_row, 0).text()
+        conn = sqlite3.connect("senu_kolekcionars.db")
+        cur = conn.cursor()
+
+        cur.execute("SELECT k.id, k.skaits FROM kolekcijas k JOIN senes s ON k.senes_id = s.id WHERE s.nosaukums = ? AND k.lietotajs_id = ?", 
+                    (mushroom_name, self.currentUser))
+        row_data = cur.fetchone()
+        conn.close()
+
+        if not row_data:
+            return
+
+        item_id, skaits = row_data
+
+        if skaits > 1:
+            self.showWarningDialog(item_id, skaits)
+        else:
+            self.confirmDelete(item_id)
+
+    def showWarningDialog(self, item_id, skaits):
+        warning_dialog = QDialog(self)
+        loadUi('ui/warning.ui', warning_dialog)
+
+        all_button = warning_dialog.findChild(QPushButton, 'allbutton')
+        last_button = warning_dialog.findChild(QPushButton, 'lastbutton')
+
+        all_button.clicked.connect(lambda: self.confirmDelete(item_id))
+        last_button.clicked.connect(lambda: self.reduceCount(item_id, skaits))
+
+        result = warning_dialog.exec_()
+
+        if result == QDialog.Accepted:
+            self.confirmDelete(item_id)
+        elif result == QDialog.Rejected:
+            self.reduceCount(item_id, skaits)
+
+
+    def confirmDelete(self, item_id):
+        conn = sqlite3.connect("senu_kolekcionars.db")
+        cur = conn.cursor()
+        cur.execute("DELETE FROM kolekcijas WHERE id = ?", (item_id,))
+        conn.commit()
+        conn.close()
+        self.loadCollectionData()
+
+    def reduceCount(self, item_id, skaits):
+        conn = sqlite3.connect("senu_kolekcionars.db")
+        cur = conn.cursor()
+        new_skaits = skaits - 1
+        cur.execute("UPDATE kolekcijas SET skaits = ? WHERE id = ?", (new_skaits, item_id))
+        conn.commit()
+        conn.close()
+        self.loadCollectionData()
 
     def gotoHome(self):
-        home = HomeScreen(self.widget, self.widget.currentUser)
+        home = HomeScreen(self.widget, self.currentUser)
         self.widget.addWidget(home)
         self.widget.setCurrentIndex(self.widget.indexOf(home))
 
