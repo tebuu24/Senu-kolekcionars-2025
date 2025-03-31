@@ -501,7 +501,7 @@ class NewsScreen(QMainWindow):
             news_item = QStandardItem(f"{entry[1]}: {entry[0]}")  #Laiks un contents
             self.model.appendRow(news_item)
 
-# Lietotāju pāŗvaldības ekrāns
+# Lietotāju pārvaldības ekrāns
 class UsersScreen(QMainWindow):
     def __init__(self, widget):
         super(UsersScreen, self).__init__()
@@ -513,7 +513,6 @@ class UsersScreen(QMainWindow):
 
         # Pievienot dzēšanas pogai funkcionalitāti
         self.deletebutton.clicked.connect(self.deleteUser)
-
         # Pievienot ziņas nosūtīšanas pogas funkcionalitāti
         self.newsbutton.clicked.connect(self.send_news)
 
@@ -522,14 +521,21 @@ class UsersScreen(QMainWindow):
         self.widget.addWidget(admin)
         self.widget.setCurrentIndex(self.widget.indexOf(admin))
     
-    def loadUsers(self, order_by="id ASC"):
+    def loadUsers(self, order_by="lietotaji.id ASC"):
         
         conn = sqlite3.connect("senu_kolekcionars.db")
         cur = conn.cursor()
-        query = f"SELECT id, lietotajvards FROM lietotaji ORDER BY {order_by}"
+
+        query = f"""
+            SELECT lietotaji.id, lietotaji.lietotajvards, COUNT(kolekcijas.id) AS kolekciju_skaits
+            FROM lietotaji
+            LEFT JOIN kolekcijas ON lietotaji.id = kolekcijas.lietotajs_id
+            GROUP BY lietotaji.id, lietotaji.lietotajvards
+            ORDER BY {order_by}
+        """
         
         print(f"Executing query: {query}")
-        
+
         try:
             cur.execute(query)
             users = cur.fetchall()
@@ -537,15 +543,17 @@ class UsersScreen(QMainWindow):
             print(f"Fetched users: {users}")
         except Exception as e:
             print(f"SQL Error: {e}")
+            return
 
         if users:
             self.userstable.setRowCount(len(users))
-            self.userstable.setColumnCount(2)
-            self.userstable.setHorizontalHeaderLabels(["ID", "Lietotājvārds"])
+            self.userstable.setColumnCount(3)
+            self.userstable.setHorizontalHeaderLabels(["ID", "Lietotājvārds", "Kolekciju skaits"])
 
             for row_index, user in enumerate(users):
                 self.userstable.setItem(row_index, 0, QTableWidgetItem(str(user[0])))
                 self.userstable.setItem(row_index, 1, QTableWidgetItem(user[1]))
+                self.userstable.setItem(row_index, 2, QTableWidgetItem(str(user[2])))  # Kolekciju skaits
         else:
             self.userstable.setRowCount(1)
             self.userstable.setColumnCount(1)
@@ -554,24 +562,24 @@ class UsersScreen(QMainWindow):
 
 
     def sortUsers(self):
-        selected_option = self.filter.currentText()  
+        selected_option = self.filter.currentText()
         
-        print(f"Selected option: {selected_option}")
-
         if selected_option == "ID (↓)":
-            self.loadUsers("id ASC")  
-            print("Sorting by ID ASC")  
+            self.loadUsers("lietotaji.id ASC")  
         elif selected_option == "ID (↑)":
-            self.loadUsers("id DESC")  
-            print("Sorting by ID DESC")  
+            self.loadUsers("lietotaji.id DESC")  
         elif selected_option == "Nosaukuma (↓)":
-            self.loadUsers("lietotajvards ASC")  
-            print("Sorting by Name ASC")  
+            self.loadUsers("lietotaji.lietotajvards ASC")  
         elif selected_option == "Nosaukuma (↑)":
-            self.loadUsers("lietotajvards DESC")  
-            print("Sorting by Name DESC")  
+            self.loadUsers("lietotaji.lietotajvards DESC")  
+        elif selected_option == "Skaita (↓)":
+            self.loadUsers("kolekciju_skaits DESC")  # Lielākais kolekciju skaits augšā
+        elif selected_option == "Skaita (↑)":
+            self.loadUsers("kolekciju_skaits ASC")  # Mazākais kolekciju skaits augšā
         else:
-            print("Unknown sorting option!")  
+            print("Nezināma šķirošanas opcija!")
+
+
 
 
 
@@ -603,7 +611,6 @@ class UsersScreen(QMainWindow):
             conn = sqlite3.connect("senu_kolekcionars.db")
             cur = conn.cursor()
 
-            # Ievietojam ziņu tabulā, ja kolekcijas_id ir norādīts
             cur.execute("INSERT INTO pazinojumi (saturs, kolekcijas_id, laiks) VALUES (?, ?, ?)", 
                         (f"Visaktīvākais sēņotājs ir {user_name}", kolekcijas_id, current_time))
             conn.commit()
