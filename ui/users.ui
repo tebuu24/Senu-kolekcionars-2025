@@ -717,12 +717,12 @@ background-color: rgb(66, 88, 56);</string>
     </item>
     <item>
      <property name="text">
-      <string>Datuma (↓)</string>
+      <string>ID (↓)</string>
      </property>
     </item>
     <item>
      <property name="text">
-      <string>Datuma (↑)</string>
+      <string>ID (↑)</string>
      </property>
     </item>
     <item>
@@ -772,9 +772,9 @@ background-color: rgb(66, 88, 56);</string>
        <colorrole role="Button">
         <brush brushstyle="SolidPattern">
          <color alpha="255">
-          <red>135</red>
-          <green>188</green>
-          <blue>116</blue>
+          <red>9</red>
+          <green>46</green>
+          <blue>33</blue>
          </color>
         </brush>
        </colorrole>
@@ -855,9 +855,9 @@ background-color: rgb(66, 88, 56);</string>
        <colorrole role="Button">
         <brush brushstyle="SolidPattern">
          <color alpha="255">
-          <red>135</red>
-          <green>188</green>
-          <blue>116</blue>
+          <red>9</red>
+          <green>46</green>
+          <blue>33</blue>
          </color>
         </brush>
        </colorrole>
@@ -938,9 +938,9 @@ background-color: rgb(66, 88, 56);</string>
        <colorrole role="Button">
         <brush brushstyle="SolidPattern">
          <color alpha="255">
-          <red>135</red>
-          <green>188</green>
-          <blue>116</blue>
+          <red>9</red>
+          <green>46</green>
+          <blue>33</blue>
          </color>
         </brush>
        </colorrole>
