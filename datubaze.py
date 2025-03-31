@@ -9,7 +9,7 @@ def initialize_database():
         CREATE TABLE IF NOT EXISTS lietotaji (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             lietotajvards TEXT UNIQUE NOT NULL,
-            parole TEXT NOT NULL,
+            parole TEXT NOT NULL
         )
     """)
 
@@ -52,8 +52,14 @@ def initialize_database():
         )
     """)
 
+    # Pievienojam sēnes
+    senes = [
+        "Sarkanā mušmire", "Baltā mušmire"
+    ]
+    cur.executemany("INSERT INTO senes (nosaukums) VALUES (?)", [(s,) for s in senes])
+
+
     conn.commit()
     conn.close()
 
 initialize_database()
-
