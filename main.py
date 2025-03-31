@@ -7,7 +7,7 @@ import re
 import os
 from PyQt5.uic import loadUi
 from PyQt5.QtWidgets import QApplication, QMainWindow, QStackedWidget, QFileDialog, QMessageBox, QLabel, QLineEdit, QMessageBox, QDialog, QTableWidgetItem
-from PyQt5.QtGui import QPixmap, QImage
+from PyQt5.QtGui import QPixmap, QImage, QStandardItemModel, QStandardItem
 from PyQt5.QtCore import Qt
 from datetime import datetime
 
@@ -163,8 +163,10 @@ class HomeScreen(QMainWindow):
         self.accountbutton.clicked.connect(self.gotoAccount)
         self.newbutton.clicked.connect(self.gotoNewUpload)
         self.collectionbutton.clicked.connect(self.gotoCollection)
+        
 
         self.get_weather()
+        self.load_home_news()
 
     def get_weather(self):
         try:
@@ -190,6 +192,21 @@ class HomeScreen(QMainWindow):
         except Exception as e:
             self.laikapstakli.setText("❌ Kļūda meklējot laikapstākļu datus.")
             print(f"Laikapstākļu api kļūda: {e}")
+
+    def load_home_news(self):
+        conn = sqlite3.connect("senu_kolekcionars.db")
+        cur = conn.cursor()
+
+        cur.execute("SELECT saturs, laiks FROM pazinojumi ORDER BY laiks DESC")
+        news_entries = cur.fetchall()
+        self.model = QStandardItemModel()
+        self.news.setModel(self.model)
+        conn.close()
+
+        self.model.clear()
+        for entry in news_entries:
+            news_item = QStandardItem(f"{entry[1]}: {entry[0]}")
+            self.model.appendRow(news_item)
 
 
     def gotoWelcome(self):
@@ -377,6 +394,11 @@ class AdminScreen(QMainWindow):
         self.newsbutton.clicked.connect(self.gotoNews)
         self.usersbutton.clicked.connect(self.gotoUsers)
 
+        self.model = QStandardItemModel()
+        self.news.setModel(self.model)
+
+        self.load_admin_news()
+
     def gotoWelcome(self):
         self.widget.currentUser = None
         welcome = WelcomeScreen(self.widget)
@@ -393,18 +415,76 @@ class AdminScreen(QMainWindow):
         self.widget.addWidget(users)
         self.widget.setCurrentIndex(self.widget.indexOf(users))
 
+    def load_admin_news(self):
+        conn = sqlite3.connect("senu_kolekcionars.db")
+        cur = conn.cursor()
+
+
+        cur.execute("SELECT saturs, laiks FROM pazinojumi ORDER BY laiks DESC")
+        news_entries = cur.fetchall()
+
+        conn.close()
+        self.model.clear()
+
+        for entry in news_entries:
+            news_item = QStandardItem(f"{entry[1]}: {entry[0]}")
+            self.model.appendRow(news_item)
+
+
 # News ekrāns
 class NewsScreen(QMainWindow):
     def __init__(self, widget):
         super(NewsScreen, self).__init__()
         loadUi("ui/news.ui", self)
         self.widget = widget
+
+        self.model = QStandardItemModel()
+        self.news.setModel(self.model)
+
+        self.publishbutton.clicked.connect(self.publish_news)
         self.backbutton.clicked.connect(self.gotoAdmin)
+
+        self.load_news()
 
     def gotoAdmin(self):
         admin = AdminScreen(self.widget)
         self.widget.addWidget(admin)
         self.widget.setCurrentIndex(self.widget.indexOf(admin))
+
+    def publish_news(self):
+        news_text = self.newsfield.toPlainText().strip()
+
+        if news_text:
+            conn = sqlite3.connect("senu_kolekcionars.db")
+            cur = conn.cursor()
+            cur.execute("""
+                INSERT INTO pazinojumi (saturs, laiks)
+                VALUES (?, datetime('now'))
+            """, (news_text,))
+
+            conn.commit()
+            conn.close()
+
+            self.newsfield.clear()
+
+            QMessageBox.information(self, "Ziņa publicēta", "Ziņa veiksmīgi publicēta!")
+
+            self.load_news()
+
+    def load_news(self):
+        """Ielādē visas ziņas no datubāzes un pievieno tās modelim (QListView)"""
+        conn = sqlite3.connect("senu_kolekcionars.db")
+        cur = conn.cursor()
+
+        cur.execute("SELECT saturs, laiks FROM pazinojumi ORDER BY laiks DESC")
+        news_entries = cur.fetchall()
+
+        conn.close()
+        self.model.clear()
+
+        for entry in news_entries:
+            news_item = QStandardItem(f"{entry[1]}: {entry[0]}")  #Laiks un contents
+            self.model.appendRow(news_item)
 
 # Lietotāju pāŗvaldības ekrāns
 class UsersScreen(QMainWindow):
