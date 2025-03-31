@@ -456,9 +456,10 @@ class NewsScreen(QMainWindow):
 
         self.model = QStandardItemModel()
         self.news.setModel(self.model)
-
+        
         self.publishbutton.clicked.connect(self.publish_news)
         self.backbutton.clicked.connect(self.gotoAdmin)
+        self.deletebutton.clicked.connect(self.delete_last_news)
 
         self.load_news()
 
@@ -500,6 +501,28 @@ class NewsScreen(QMainWindow):
         for entry in news_entries:
             news_item = QStandardItem(f"{entry[1]}: {entry[0]}")  #Laiks un contents
             self.model.appendRow(news_item)
+    
+    def delete_last_news(self):
+        conn = sqlite3.connect("senu_kolekcionars.db")
+        cur = conn.cursor()
+
+        cur.execute("SELECT id FROM pazinojumi ORDER BY laiks DESC LIMIT 1")
+        last_news = cur.fetchone()
+
+        if last_news:
+            last_news_id = last_news[0]
+
+            cur.execute("DELETE FROM pazinojumi WHERE id = ?", (last_news_id,))
+            conn.commit()
+            conn.close()
+
+            QMessageBox.information(self, "Ziņa dzēsta", "Pēdējā ziņa veiksmīgi dzēsta!")
+        else:
+            QMessageBox.warning(self, "Nav ziņu", "Nav nevienas ziņas, ko dzēst!")
+            conn.close()
+
+        self.load_news()
+
 
 # Lietotāju pārvaldības ekrāns
 class UsersScreen(QMainWindow):
