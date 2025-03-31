@@ -583,10 +583,19 @@ class NewUploadScreen(QMainWindow):
         super(NewUploadScreen, self).__init__(widget)
         loadUi("ui/newupload.ui", self)
         self.widget = widget
+
+        # UI loga ģeometrijas piespiedu labojums
+        self.setFixedSize(521, 850)
+        self.setGeometry(0, 0, 521, 850)
+        self.setParent(widget)
+        self.setWindowFlags(Qt.Widget)
+        self.hide()
+        self.showNormal()
+
         self.homebutton.clicked.connect(self.gotoHome)
         self.uploadbutton.clicked.connect(self.upload)
         self.error.setText("")
-        self.showNormal()
+        
 
     def upload(self):
         file_path, _ = QFileDialog.getOpenFileName(self, "Izvēlies attēlu", "", "Images (*.png *.jpg *.jpeg)")
@@ -598,6 +607,12 @@ class NewUploadScreen(QMainWindow):
         if not file_path.lower().endswith(('.png', '.jpg', '.jpeg')):
             self.error.setText("❌ Failam jābūt .jpg, .jpeg vai .png formātā.")
             return
+        
+        # pārbauda vai logs jau neeksistē, lai nedubultotos
+        for i in range(self.widget.count()):
+            if isinstance(self.widget.widget(i), AddScreen):
+                self.widget.setCurrentIndex(i)
+                return
 
         add_screen = AddScreen(self.widget, file_path)
         self.widget.addWidget(add_screen)
@@ -605,22 +620,30 @@ class NewUploadScreen(QMainWindow):
 
 
     def gotoHome(self):
+        for i in range(self.widget.count()):
+            if isinstance(self.widget.widget(i), HomeScreen):
+                self.widget.setCurrentIndex(i)
+                return
+
         home = HomeScreen(self.widget, self.widget.currentUser)
         self.widget.addWidget(home)
         self.widget.setCurrentIndex(self.widget.indexOf(home))
 
-    def gotoAdd(self):
-        add = AddScreen(self.widget, self.widget.currentUser)
-        self.widget.addWidget(add)
-        self.widget.setCurrentIndex(self.widget.indexOf(add))
 
-
-
+# Sēnes datu ievades logs
 class AddScreen(QMainWindow):
     def __init__(self, widget, file_path):
         super(AddScreen, self).__init__(widget)
         loadUi("ui/newadd.ui", self)
         self.widget = widget
+
+        # UI loga ģeometrijas piespiedu labojums
+        self.setFixedSize(521, 850)
+        self.setGeometry(0, 0, 521, 850)
+        self.setParent(widget)
+        self.setWindowFlags(Qt.Widget)
+        self.hide()
+        self.showNormal()
 
         self.file_path = file_path
 
@@ -636,14 +659,25 @@ class AddScreen(QMainWindow):
         self.deletebutton.clicked.connect(self.gotoNewUpload)
 
     def gotoHome(self):
+        for i in range(self.widget.count()):
+            if isinstance(self.widget.widget(i), HomeScreen):
+                self.widget.setCurrentIndex(i)
+                return
+
         home = HomeScreen(self.widget, self.widget.currentUser)
         self.widget.addWidget(home)
         self.widget.setCurrentIndex(self.widget.indexOf(home))
-    
+
     def gotoNewUpload(self):
+        for i in range(self.widget.count()):
+            if isinstance(self.widget.widget(i), NewUploadScreen):
+                self.widget.setCurrentIndex(i)
+                return
+
         newupload = NewUploadScreen(self.widget)
         self.widget.addWidget(newupload)
         self.widget.setCurrentIndex(self.widget.indexOf(newupload))
+
 
     def loadComboBoxes(self):
         conn = sqlite3.connect("senu_kolekcionars.db")
@@ -662,7 +696,7 @@ class AddScreen(QMainWindow):
         selected_location = self.locationcombo.currentText()
         entered_date = self.datefield.text().strip()
 
-        # (dd.mm.yyyy -> yyyy-mm-dd)
+        # Convert dd.mm.yyyy -> yyyy-mm-dd
         import datetime
         try:
             date_obj = datetime.datetime.strptime(entered_date, "%d.%m.%Y")
@@ -672,7 +706,7 @@ class AddScreen(QMainWindow):
             self.datefield.setText("dd.mm.gggg")
             return
 
-        # bilde uz blob
+        # bilde -> blob
         with open(self.file_path, 'rb') as file:
             image_blob = file.read()
 
@@ -693,14 +727,14 @@ class AddScreen(QMainWindow):
             return
         mushroom_id = mushroom_id[0]
 
-        # Vai lietotājs jau ir pievienojis iepriekš
         cur.execute("SELECT skaits FROM kolekcijas WHERE lietotajs_id = ? AND senes_id = ?", 
                     (self.widget.currentUser, mushroom_id))
         existing_record = cur.fetchone()
 
+        # pārbaude, vai lietotājs ir jau iepriekš pievienojis šo sēni
         if existing_record:
             new_count = existing_record[0] + 1
-            cur.execute("UPDATE kolekcijas SET skaits = ?, lokacija_id = ? AND datums = ? WHERE lietotajs_id = ? AND senes_id = ?",
+            cur.execute("UPDATE kolekcijas SET skaits = ?, lokacija_id = ?, datums = ? WHERE lietotajs_id = ? AND senes_id = ?",
                         (new_count, location_id, formatted_date, self.widget.currentUser, mushroom_id))
         else:
             cur.execute("INSERT INTO kolekcijas (lietotajs_id, senes_id, lokacija_id, attels, skaits, datums) VALUES (?, ?, ?, ?, ?, ?)",
@@ -710,6 +744,7 @@ class AddScreen(QMainWindow):
         conn.close()
 
         self.error.setText("✅ Pievienots kolekcijai!")
+
 
 
 
