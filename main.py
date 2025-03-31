@@ -7,9 +7,12 @@ import re
 import os
 from PyQt5.uic import loadUi
 from PyQt5.QtWidgets import QApplication, QMainWindow, QStackedWidget, QFileDialog, QMessageBox, QLabel, QLineEdit, QMessageBox, QDialog, QTableWidgetItem, QPushButton
-from PyQt5.QtGui import QPixmap, QImage, QStandardItemModel, QStandardItem, QIcon
+from PyQt5.QtGui import QPixmap, QImage, QStandardItemModel, QStandardItem, QIcon, QPixmap, QIcon, QImage, QTransform
 from PyQt5.QtCore import Qt
 from datetime import datetime
+from PyQt5.QtGui import QPixmap, QIcon
+from PyQt5.QtWidgets import QTableWidgetItem, QLabel, QHBoxLayout, QWidget
+import sqlite3
 
 # Galvenais ekrāns
 class WelcomeScreen(QMainWindow):
@@ -456,7 +459,7 @@ class NewsScreen(QMainWindow):
 
         self.model = QStandardItemModel()
         self.news.setModel(self.model)
-        
+
         self.publishbutton.clicked.connect(self.publish_news)
         self.backbutton.clicked.connect(self.gotoAdmin)
         self.deletebutton.clicked.connect(self.delete_last_news)
@@ -667,10 +670,6 @@ class CollectionScreen(QMainWindow):
     def loadCollectionData(self, order_by="k.datums DESC"):
         conn = sqlite3.connect("senu_kolekcionars.db")
         cur = conn.cursor()
-        selected_option = self.filter.currentText()  
-        print(f"Selected option: {selected_option}")
-        
-
 
         query = f"""
         SELECT k.id, s.nosaukums, l.nosaukums, k.skaits, k.datums, k.attels
@@ -680,6 +679,9 @@ class CollectionScreen(QMainWindow):
         WHERE k.lietotajs_id = ?
         ORDER BY {order_by}
         """
+
+        print(f"Executing query: {query}")  # Debugging
+
         cur.execute(query, (self.currentUser,))
         records = cur.fetchall()
         conn.close()
@@ -700,35 +702,49 @@ class CollectionScreen(QMainWindow):
             if image_blob:
                 pixmap = QPixmap()
                 pixmap.loadFromData(image_blob)
-                icon = QIcon(pixmap)
-                item = QTableWidgetItem()
-                item.setIcon(icon)
-                self.collectiontable.setItem(row_index, 4, item)
+
+                # Mainam attēla izmērus uz 200x200
+                scaled_pixmap = pixmap.scaled(100, 100)
+
+                # Izveidojam QLabel, lai attēlotu attēlu
+                label = QLabel()
+                label.setPixmap(scaled_pixmap)
+                label.setAlignment(Qt.AlignCenter)  # Centrājam attēlu
+
+                # Izveidojam widget, kurā ievietojam QLabel
+                widget = QWidget()
+                layout = QHBoxLayout(widget)
+                layout.addWidget(label)
+                layout.setAlignment(Qt.AlignCenter)
+                layout.setContentsMargins(0, 0, 0, 0) # Bez margām
+
+                # Iestatām widget kā tabulas šūnas saturu
+                self.collectiontable.setCellWidget(row_index, 4, widget)
+            self.collectiontable.setColumnWidth(4, 100)  # Attēla kolonna
+            self.collectiontable.verticalHeader().setDefaultSectionSize(100)
 
     def sortCollection(self):
-        selected_option = self.filter.currentText()
-        print(f"Selected filter option: {selected_option}")
+        print("sortCollection funkcija izsaukta")  # Debug
 
-        if selected_option == "Nosaukums (↓)":
-            self.loadCollectionData("s.nosaukums ASC")  
-            print("Sorting by ID ASC")  
-        elif selected_option == "Nosaukums (↑)":
-            self.loadCollectionData("s.nosaukums DESC")  
-            print("Sorting by ID DESC")  
-        elif selected_option == "Datums (↓)":
-            self.loadCollectionData("k.datums ASC")  
-            print("Sorting by date ASC")  
-        elif selected_option == "Datums (↑)":
-            self.loadCollectionData("k.datums DESC")  
-            print("Sorting by date DESC")  
-        elif selected_option == "Skaits (↓)":
-            self.loadCollectionData("k.skaits ASC")  
-            print("Sorting by count ASC")  
-        elif selected_option == "Skaits (↑)":
-            self.loadCollectionData("k.skaits DESC")  
-            print("Sorting by count DESC") 
-        else:
-            print("Unknown sorting option!")  
+        selected_option = self.filter.currentText()
+        print(f"Izvēlētā opcija: {selected_option}")  # Debug
+
+        if selected_option == "Nosaukuma (↓)":
+            order_by = "s.nosaukums ASC"
+        elif selected_option == "Nosaukuma (↑)":
+            order_by = "s.nosaukums DESC"
+        elif selected_option == "Datuma (↓)":
+            order_by = "k.datums ASC"
+        elif selected_option == "Datuma (↑)":
+            order_by = "k.datums DESC"
+        elif selected_option == "Skaita (↓)":
+            order_by = "k.skaits ASC"
+        elif selected_option == "Skaita (↑)":
+            order_by = "k.skaits DESC"
+
+        print(f"Kārtošanas secība: {order_by}")  # Debug
+
+        self.loadCollectionData(order_by)
 
     def deleteSelectedRow(self):
         selected_row = self.collectiontable.currentRow()
