@@ -881,6 +881,11 @@ class AddScreen(QMainWindow):
 
         self.file_path = file_path
 
+        today_date = datetime.today().strftime("%d.%m.%Y")
+        self.datefield.setText(today_date)
+        self.error.setText("")
+
+
         pixmap = QPixmap(file_path)
         if pixmap.isNull():
             self.error.setText("❌ Nevarēja ielādēt attēlu.")
@@ -930,14 +935,13 @@ class AddScreen(QMainWindow):
         selected_location = self.locationcombo.currentText()
         entered_date = self.datefield.text().strip()
 
-        # Convert dd.mm.yyyy -> yyyy-mm-dd
-        import datetime
+        # dd.mm.yyyy -> yyyy-mm-dd
         try:
-            date_obj = datetime.datetime.strptime(entered_date, "%d.%m.%Y")
+            date_obj = datetime.strptime(entered_date, "%d.%m.%Y")
             formatted_date = date_obj.strftime("%Y-%m-%d")
         except ValueError:
             self.error.setText("❌ Nepareizs datuma formāts. Izmantojiet: dd.mm.gggg")
-            self.datefield.setText("dd.mm.gggg")
+            self.datefield.setText(datetime.today().strftime("%d.%m.%Y"))
             return
 
         # bilde -> blob
