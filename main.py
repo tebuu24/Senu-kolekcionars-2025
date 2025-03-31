@@ -242,6 +242,7 @@ class AccountScreen(QMainWindow):
         self.usernamelabel.setText(currentUser)
         self.homebutton.clicked.connect(self.gotoHome)
         self.deleteaccbutton.clicked.connect(self.showDeleteConfirmation)
+        self.loadSumData()
 
     def gotoData(self):
         data = DataScreen(self.widget)
@@ -252,6 +253,21 @@ class AccountScreen(QMainWindow):
         home = HomeScreen(self.widget, self.widget.currentUser)
         self.widget.addWidget(home)
         self.widget.setCurrentIndex(self.widget.indexOf(home))
+
+    def loadSumData(self):
+        conn = sqlite3.connect("senu_kolekcionars.db")
+        cur = conn.cursor()
+
+        cur.execute("SELECT SUM(skaits) FROM kolekcijas WHERE lietotajs_id = ?", (self.currentUser,))
+        total_count = cur.fetchone()[0]
+        
+        conn.close()
+
+        if total_count is None:
+            total_count = 0
+
+        self.datasum.setText(str(total_count))
+
 
         
     # Konta dzēšanai ir apstiprinājums
