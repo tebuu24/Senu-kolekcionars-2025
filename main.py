@@ -494,6 +494,7 @@ class UsersScreen(QMainWindow):
         self.widget = widget
         self.backbutton.clicked.connect(self.gotoAdmin)
         self.loadUsers()
+        self.filter.currentIndexChanged.connect(self.sortUsers)
 
         # Pievienot dzēšanas pogai funkcionalitāti
         self.deletebutton.clicked.connect(self.deleteUser)
@@ -505,13 +506,22 @@ class UsersScreen(QMainWindow):
         admin = AdminScreen(self.widget)
         self.widget.addWidget(admin)
         self.widget.setCurrentIndex(self.widget.indexOf(admin))
-
-    def loadUsers(self):
+    
+    def loadUsers(self, order_by="id ASC"):
+        
         conn = sqlite3.connect("senu_kolekcionars.db")
         cur = conn.cursor()
-        cur.execute("SELECT id, lietotajvards FROM lietotaji")
-        users = cur.fetchall()
-        conn.close()
+        query = f"SELECT id, lietotajvards FROM lietotaji ORDER BY {order_by}"
+        
+        print(f"Executing query: {query}")  # Debug
+        
+        try:
+            cur.execute(query)
+            users = cur.fetchall()
+            conn.close()
+            print(f"Fetched users: {users}")
+        except Exception as e:
+            print(f"SQL Error: {e}")
 
         if users:
             self.userstable.setRowCount(len(users))
@@ -526,6 +536,31 @@ class UsersScreen(QMainWindow):
             self.userstable.setColumnCount(1)
             self.userstable.setHorizontalHeaderLabels(["Nav lietotāju"])
             self.userstable.setItem(0, 0, QTableWidgetItem("Nav lietotāju datu."))
+
+
+    def sortUsers(self):
+        """Sort users based on selected filter option."""
+        selected_option = self.filter.currentText()  
+        
+        print(f"Selected option: {selected_option}")  # Debug
+
+        if selected_option == "Datuma (↓)":
+            self.loadUsers("id ASC")  
+            print("Sorting by ID ASC")  
+        elif selected_option == "Datuma (↑)":
+            self.loadUsers("id DESC")  
+            print("Sorting by ID DESC")  
+        elif selected_option == "Nosaukuma (↓)":
+            self.loadUsers("lietotajvards ASC")  
+            print("Sorting by Name ASC")  
+        elif selected_option == "Nosaukuma (↑)":
+            self.loadUsers("lietotajvards DESC")  
+            print("Sorting by Name DESC")  
+        else:
+            print("Unknown sorting option!")  
+
+
+
 
     def deleteUser(self):
         selected_row = self.userstable.currentRow()
