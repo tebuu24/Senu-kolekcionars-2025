@@ -788,7 +788,29 @@ class UsersScreen(QMainWindow):
             conn.commit()
             conn.close()
 
-            QMessageBox.information(self, "Ziņa", message)
+            msg = QMessageBox(self)
+            msg.setWindowTitle("Ziņa")
+            msg.setText(message)
+            msg.setStyleSheet("""
+                QMessageBox {
+                    background-color: white;
+                }
+                QLabel {
+                    background-color: white;
+                    color: black;
+                    padding: 10px;
+                }
+                QPushButton {
+                    background-color: #f0f0f0;
+                    color: black;
+                    border: 1px solid gray;
+                     padding: 5px;
+                }
+                QPushButton:hover {
+                    background-color: lightgray;
+                }
+            """)
+            msg.exec_()
 
 
 # Lietotāja kolekcijas ekrāns
@@ -914,22 +936,28 @@ class CollectionScreen(QMainWindow):
             self.confirmDelete(item_id)
 
     # rāda brīdinājumu, ja kolekcijā ir vairāk par vienu ierakstu
-    def showWarningDialog(self, item_id, skaits):
+    def showWarningDialog(self, item_id, skaits): 
         warning_dialog = QDialog(self)
         loadUi('ui/warning.ui', warning_dialog)
 
         all_button = warning_dialog.findChild(QPushButton, 'allbutton')
         last_button = warning_dialog.findChild(QPushButton, 'lastbutton')
 
-        all_button.clicked.connect(lambda: self.confirmDelete(item_id))
-        last_button.clicked.connect(lambda: self.reduceCount(item_id, skaits))
+        all_button.clicked.connect(lambda: self.handleDelete(warning_dialog, item_id, skaits, True))
+        last_button.clicked.connect(lambda: self.handleDelete(warning_dialog, item_id, skaits, False))
 
-        result = warning_dialog.exec_()
+        warning_dialog.exec_()
 
-        if result == QDialog.Accepted:
+    # dati tiek dzēsti un logs aizvērts
+    def handleDelete(self, dialog, item_id, skaits, delete_all):
+        if delete_all:
             self.confirmDelete(item_id)
-        elif result == QDialog.Rejected:
+        else:
             self.reduceCount(item_id, skaits)
+
+        dialog.accept()
+
+
 
     # apstiprina un dzēš ierakstu no datubāzes
     def confirmDelete(self, item_id):
