@@ -314,11 +314,55 @@ class AccountScreen(QMainWindow):
             cursor.execute("DELETE FROM lietotaji WHERE lietotajvards=?", (self.currentUser,))
             connection.commit()
 
-            QMessageBox.information(self, '✅', 'Konts tika veiksmīgi dzēsts.')
+            msg = QMessageBox(self)
+            msg.setWindowTitle("Konts ir dzēsts")
+            msg.setText("✅ Konts tika veiksmīgi dzēsts.")
+            msg.setStyleSheet("""
+                QMessageBox {
+                    background-color: white;
+                }
+                QLabel {
+                    background-color: white;
+                    color: black;
+                    padding: 10px;
+                }
+                QPushButton {
+                    background-color: #f0f0f0;
+                    color: black;
+                    border: 1px solid gray;
+                     padding: 5px;
+                }
+                QPushButton:hover {
+                    background-color: lightgray;
+                }
+            """)
+            msg.exec_()
 
             self.gotoWelcome()
         except Exception as e:
-            QMessageBox.critical(self, '❌', f"Kļūda dzēšot kontu: {e}")
+            msg = QMessageBox(self)
+            msg.setWindowTitle("Kļūda")
+            msg.setText(f"❌ Kļūda dzēšot kontu: {e}")
+            msg.setStyleSheet("""
+                QMessageBox {
+                    background-color: white;
+                }
+                QLabel {
+                    background-color: white;
+                    color: black;
+                    padding: 10px;
+                }
+                QPushButton {
+                    background-color: #f0f0f0;
+                    color: black;
+                    border: 1px solid gray;
+                     padding: 5px;
+                }
+                QPushButton:hover {
+                    background-color: lightgray;
+                }
+            """)
+            msg.exec_()
         finally:
             connection.close()
             self.dialog.accept()
