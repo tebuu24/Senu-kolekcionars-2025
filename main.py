@@ -1,3 +1,4 @@
+# bibliotēkas
 import sys
 import sqlite3
 import bcrypt
@@ -81,18 +82,21 @@ class LoginScreen(QMainWindow):
     def gotoHome(self):
         self.usernamefield.clear()
         self.passwordfield.clear()
+        self.error.setText("")
         home = HomeScreen(self.widget, self.widget.currentUser)
         self.widget.addWidget(home)
         self.widget.setCurrentIndex(self.widget.indexOf(home))
 
     # novirza uz administratora paneli
     def gotoAdmin(self):
+        self.error.setText("")
         admin = AdminScreen(self.widget)
         self.widget.addWidget(admin)
         self.widget.setCurrentIndex(self.widget.indexOf(admin))
 
     # pāreja uz reģistrācijas ekrānu
     def gotoRegister(self):
+        self.error.setText("")
         self.usernamefield.clear()
         self.passwordfield.clear()
         if not hasattr(self.widget, 'registerScreen'):
@@ -143,13 +147,14 @@ class RegisterScreen(QMainWindow):
         conn.commit()
         conn.close()
 
-        self.error.setText("✅ Reģistrācija veiksmīga! <br>Lūdzu dodieties uz lapu 'Pieteikties'.")
+        self.error.setText("✅ Reģistrācija veiksmīga! <br>Lūdzu dodieties pieslēgšanos.")
         self.usernamefield.clear()
         self.passwordfield.clear()
         self.passwordfield_2.clear()
 
     # pāreja uz pieteikšanās ekrānu
     def gotoLogin(self):
+        self.error.setText("")
         self.usernamefield.clear()
         self.passwordfield.clear()
         if not hasattr(self.widget, 'loginScreen'):
@@ -344,12 +349,14 @@ class DataScreen(QMainWindow):
 
     # dodas uz sākumlapu pēc izmaiņām vai atcelšanas
     def gotoHome(self):
+        self.error.setText("")
         home = HomeScreen(self.widget, self.widget.currentUser)
         self.widget.addWidget(home)
         self.widget.setCurrentIndex(self.widget.indexOf(home))
 
     # dodas atpakaļ uz konta ekrānu
     def gotoAccount(self):
+        self.error.setText("")
         account = AccountScreen(self.widget, self.widget.currentUser)
         self.widget.addWidget(account)
         self.widget.setCurrentIndex(self.widget.indexOf(account))
@@ -408,6 +415,7 @@ class DataScreen(QMainWindow):
                 return
             hashed_new_password = bcrypt.hashpw(new_password.encode(), bcrypt.gensalt()).decode()
         else:
+            self.error.setText("")
             hashed_new_password = stored_password
 
         # saglabā izmaiņas datubāzē un atjaunina lietotāja informāciju
@@ -903,6 +911,11 @@ class AddScreen(QMainWindow):
         self.setWindowFlags(Qt.Widget)
         self.hide()
         self.showNormal()
+        self.error.setText("")
+
+        #šodienas datums automātiski tiek piedāvāts
+        today_date = datetime.today().strftime("%d.%m.%Y")
+        self.datefield.setText(today_date)
 
         self.file_path = file_path
         # parāda un pārbauda attēlu
