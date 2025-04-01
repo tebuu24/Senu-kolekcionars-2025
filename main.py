@@ -758,6 +758,12 @@ class UsersScreen(QMainWindow):
     def deleteUser(self):
         selected_row = self.userstable.currentRow()
         if selected_row != -1: 
+            username = self.userstable.item(selected_row, 1).text()
+            
+            if username.lower() == "administrators":  
+                QMessageBox.warning(self, "Dzēšana liegta", "Administrators lietotāju nevar dzēst!")
+                return
+
             user_id = self.userstable.item(selected_row, 0).text()
             conn = sqlite3.connect("senu_kolekcionars.db")
             cur = conn.cursor()
