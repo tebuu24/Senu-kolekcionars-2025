@@ -547,45 +547,45 @@ class UsersScreen(QMainWindow):
         self.widget.addWidget(admin)
         self.widget.setCurrentIndex(self.widget.indexOf(admin))
     
-    def loadUsers(self, order_by="lietotaji.id ASC"):
-        
+    def loadUsers(self, order_by="kolekcijas.skaits DESC"):
         conn = sqlite3.connect("senu_kolekcionars.db")
         cur = conn.cursor()
 
         query = f"""
-            SELECT lietotaji.id, lietotaji.lietotajvards, COUNT(kolekcijas.id) AS kolekciju_skaits
+            SELECT lietotaji.id, lietotaji.lietotajvards, 
+                COALESCE(SUM(kolekcijas.skaits), 0) AS skaits
             FROM lietotaji
-            LEFT JOIN kolekcijas ON lietotaji.id = kolekcijas.lietotajs_id
-            GROUP BY lietotaji.id, lietotaji.lietotajvards
+            LEFT JOIN kolekcijas ON lietotaji.lietotajvards = kolekcijas.lietotajs_id
+            GROUP BY lietotaji.lietotajvards
             ORDER BY {order_by}
         """
-        
-        print(f"Executing query: {query}")
 
         try:
             cur.execute(query)
-            users = cur.fetchall()
+            records = cur.fetchall()
+            print(f"Fetched users: {records}")
+
             conn.close()
-            print(f"Fetched users: {users}")
+
+            if records:
+                self.userstable.setRowCount(len(records))
+                self.userstable.setColumnCount(3)
+                self.userstable.setHorizontalHeaderLabels(["ID", "Lietotājvārds", "Skaits"])
+
+                for row_index, user in enumerate(records):
+                    print(f"User data: {user}")
+                    self.userstable.setItem(row_index, 0, QTableWidgetItem(str(user[0])))
+                    self.userstable.setItem(row_index, 1, QTableWidgetItem(user[1]))
+                    self.userstable.setItem(row_index, 2, QTableWidgetItem(str(user[2])))
+            else:
+                self.userstable.setRowCount(1)
+                self.userstable.setColumnCount(1)
+                self.userstable.setHorizontalHeaderLabels(["Nav lietotāju"])
+                self.userstable.setItem(0, 0, QTableWidgetItem("Nav lietotāju datu."))
+
         except Exception as e:
             print(f"SQL Error: {e}")
-            return
-
-        if users:
-            self.userstable.setRowCount(len(users))
-            self.userstable.setColumnCount(3)
-            self.userstable.setHorizontalHeaderLabels(["ID", "Lietotājvārds", "Kolekciju skaits"])
-
-            for row_index, user in enumerate(users):
-                self.userstable.setItem(row_index, 0, QTableWidgetItem(str(user[0])))
-                self.userstable.setItem(row_index, 1, QTableWidgetItem(user[1]))
-                self.userstable.setItem(row_index, 2, QTableWidgetItem(str(user[2])))  # Kolekciju skaits
-        else:
-            self.userstable.setRowCount(1)
-            self.userstable.setColumnCount(1)
-            self.userstable.setHorizontalHeaderLabels(["Nav lietotāju"])
-            self.userstable.setItem(0, 0, QTableWidgetItem("Nav lietotāju datu."))
-
+            conn.close()
 
     def sortUsers(self):
         selected_option = self.filter.currentText()
@@ -599,11 +599,12 @@ class UsersScreen(QMainWindow):
         elif selected_option == "Nosaukuma (↑)":
             self.loadUsers("lietotaji.lietotajvards DESC")  
         elif selected_option == "Skaita (↓)":
-            self.loadUsers("kolekciju_skaits DESC")  # Lielākais kolekciju skaits augšā
+            self.loadUsers("skaits DESC")
         elif selected_option == "Skaita (↑)":
-            self.loadUsers("kolekciju_skaits ASC")  # Mazākais kolekciju skaits augšā
+            self.loadUsers("skaits ASC")
         else:
             print("Nezināma šķirošanas opcija!")
+
 
 
 
@@ -881,11 +882,6 @@ class AddScreen(QMainWindow):
 
         self.file_path = file_path
 
-        today_date = datetime.today().strftime("%d.%m.%Y")
-        self.datefield.setText(today_date)
-        self.error.setText("")
-
-
         pixmap = QPixmap(file_path)
         if pixmap.isNull():
             self.error.setText("❌ Nevarēja ielādēt attēlu.")
@@ -935,13 +931,14 @@ class AddScreen(QMainWindow):
         selected_location = self.locationcombo.currentText()
         entered_date = self.datefield.text().strip()
 
-        # dd.mm.yyyy -> yyyy-mm-dd
+        # Convert dd.mm.yyyy -> yyyy-mm-dd
+        import datetime
         try:
-            date_obj = datetime.strptime(entered_date, "%d.%m.%Y")
+            date_obj = datetime.datetime.strptime(entered_date, "%d.%m.%Y")
             formatted_date = date_obj.strftime("%Y-%m-%d")
         except ValueError:
             self.error.setText("❌ Nepareizs datuma formāts. Izmantojiet: dd.mm.gggg")
-            self.datefield.setText(datetime.today().strftime("%d.%m.%Y"))
+            self.datefield.setText("dd.mm.gggg")
             return
 
         # bilde -> blob
