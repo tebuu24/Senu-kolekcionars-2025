@@ -507,21 +507,45 @@ class NewsScreen(QMainWindow):
     # publicē jaunu ziņu, ja teksts nav tukšs
     def publish_news(self):
         news_text = self.newsfield.toPlainText().strip()
+        current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
         if news_text:
             conn = sqlite3.connect("senu_kolekcionars.db")
             cur = conn.cursor()
             cur.execute("""
                 INSERT INTO pazinojumi (saturs, laiks)
-                VALUES (?, datetime('now'))
-            """, (news_text,))
+                VALUES (?, ?)
+            """, (news_text, current_time))
 
             conn.commit()
             conn.close()
 
             self.newsfield.clear()
 
-            QMessageBox.information(self, "Ziņa publicēta", "Ziņa veiksmīgi publicēta!")
+            msg = QMessageBox(self)
+            msg.setWindowTitle("Ziņa publicēta")
+            msg.setText("Ziņa veiksmīgi publicēta!")
+            msg.setStyleSheet("""
+                QMessageBox {
+                    background-color: white;
+                }
+                QLabel {
+                    background-color: white;
+                    color: black;
+                    padding: 10px;
+                }
+                QPushButton {
+                    background-color: #f0f0f0;
+                    color: black;
+                    border: 1px solid gray;
+                     padding: 5px;
+                }
+                QPushButton:hover {
+                    background-color: lightgray;
+                }
+            """)
+            msg.exec_()
+
 
             self.load_news()
 
@@ -537,7 +561,7 @@ class NewsScreen(QMainWindow):
         self.model.clear()
 
         for entry in news_entries:
-            news_item = QStandardItem(f"{entry[1]}: {entry[0]}")  #Laiks un contents
+            news_item = QStandardItem(f"{entry[1]}: {entry[0]}")
             self.model.appendRow(news_item)
     
     # izdzēš pēdējo publicēto ziņu no datubāzes
@@ -555,9 +579,54 @@ class NewsScreen(QMainWindow):
             conn.commit()
             conn.close()
 
-            QMessageBox.information(self, "Ziņa dzēsta", "Pēdējā ziņa veiksmīgi dzēsta!")
+            msg = QMessageBox(self)
+            msg.setWindowTitle("Ziņa dzēsta")
+            msg.setText("Pēdējā ziņa veiksmīgi dzēsta!")
+            msg.setStyleSheet("""
+                QMessageBox {
+                    background-color: white;
+                }
+                QLabel {
+                    background-color: white;
+                    color: black;
+                    padding: 10px;
+                }
+                QPushButton {
+                    background-color: #f0f0f0;
+                    color: black;
+                    border: 1px solid gray;
+                     padding: 5px;
+                }
+                QPushButton:hover {
+                    background-color: lightgray;
+                }
+            """)
+            msg.exec_()
         else:
-            QMessageBox.warning(self, "Nav ziņu", "Nav nevienas ziņas, ko dzēst!")
+            msg = QMessageBox(self)
+            msg.setWindowTitle("Nav ziņu")
+            msg.setText("Nav nevienas ziņas, ko dzēst!")
+            msg.setStyleSheet("""
+                QMessageBox {
+                    background-color: white;
+                }
+                QLabel {
+                    background-color: white;
+                    color: black;
+                    padding: 10px;
+                }
+                QPushButton {
+                    background-color: #f0f0f0;
+                    color: black;
+                    border: 1px solid gray;
+                     padding: 5px;
+                }
+                QPushButton:hover {
+                    background-color: lightgray;
+                }
+            """)
+            msg.exec_()
+            
             conn.close()
 
         self.load_news()
