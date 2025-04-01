@@ -760,8 +760,31 @@ class UsersScreen(QMainWindow):
         if selected_row != -1: 
             username = self.userstable.item(selected_row, 1).text()
             
-            if username.lower() == "administrators":  
-                QMessageBox.warning(self, "Dzēšana liegta", "Administrators lietotāju nevar dzēst!")
+            # administratoru nevar dzēst
+            if username.lower() == "administrators":
+                msg = QMessageBox(self)
+                msg.setWindowTitle("Dzēšana liegta")
+                msg.setText("Administrators lietotāju nevar dzēst!")
+                msg.setStyleSheet("""
+                    QMessageBox {
+                        background-color: white;
+                    }
+                    QLabel {
+                        background-color: white;
+                        color: black;
+                        padding: 10px;
+                    }
+                    QPushButton {
+                        background-color: #f0f0f0;
+                        color: black;
+                        border: 1px solid gray;
+                        padding: 5px;
+                    }
+                    QPushButton:hover {
+                        background-color: lightgray;
+                    }
+                """)
+                msg.exec_()
                 return
 
             user_id = self.userstable.item(selected_row, 0).text()
