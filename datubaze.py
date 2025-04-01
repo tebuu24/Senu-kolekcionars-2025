@@ -1,10 +1,10 @@
 import sqlite3
-import bcrypt
 
 def initialize_database():
     conn = sqlite3.connect("senu_kolekcionars.db")
     cur = conn.cursor()
 
+    # lietotāju tabula
     cur.execute("""
         CREATE TABLE IF NOT EXISTS lietotaji (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -13,6 +13,7 @@ def initialize_database():
         )
     """)
 
+    # sēņu tabula
     cur.execute("""
         CREATE TABLE IF NOT EXISTS senes (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -20,6 +21,7 @@ def initialize_database():
         )
     """)
 
+    # mežu tabula
     cur.execute("""
         CREATE TABLE IF NOT EXISTS lokacija (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -27,6 +29,7 @@ def initialize_database():
         )
     """)
 
+    #kolekciju tabula
     cur.execute("""
         CREATE TABLE IF NOT EXISTS kolekcijas (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -42,6 +45,7 @@ def initialize_database():
         )
     """)
 
+    # paziņojumu tabula
     cur.execute("""
         CREATE TABLE IF NOT EXISTS pazinojumi (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -51,13 +55,6 @@ def initialize_database():
             FOREIGN KEY (kolekcijas_id) REFERENCES kolekcijas(id) ON DELETE CASCADE
         )
     """)
-
-    # Pievienojam sēnes
-    senes = [
-        "Sarkanā mušmire", "Baltā mušmire"
-    ]
-    cur.executemany("INSERT INTO senes (nosaukums) VALUES (?)", [(s,) for s in senes])
-
 
     conn.commit()
     conn.close()
