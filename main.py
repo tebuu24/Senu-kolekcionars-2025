@@ -420,7 +420,7 @@ class DataScreen(QMainWindow):
 
         # pārbauda, vai ievadītā parole sakrīt ar esošo paroli
         if not result:
-            self.error.setText("❌ Lietotājs netika atrasts.")
+            self.error.setText("❌ Paroles dati nav pareizi.")
             conn.close()
             return
 
